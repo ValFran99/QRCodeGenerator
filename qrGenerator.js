@@ -43,15 +43,36 @@ function getCharCount(textLength, mode){
 function encodeData(textToEncode){
   enMode = getEncodingMode(textToEncode);
   charCount = getCharCount(textToEncode.length, enMode);
-  encodedString = ""
-  for(let index = 0; index < textToEncode.length; index++){
-    encodedString += textToEncode.charCodeAt(index).toString(2).padStart(8,"0")
+  encodedString = "";
+
+  if (enMode == "0001"){
+    // numeric
+    // tengo que partir esto en grupos de 3
   }
 
-  return enMode + charCount + encodedString
+  if (enMode == "0010"){
+    // alphanumeric
+  }
+
+  if (enMode == "0100"){
+    // byte
+    for(let index = 0; index < textToEncode.length; index++){
+      encodedString += textToEncode.charCodeAt(index).toString(2).padStart(8,"0");
+    }
+  }
+
+  if (enMode == "1000"){
+    // kanji
+  }
+
+  
+  
+
+  return enMode + charCount + encodedString;
 
 }
 
-url = "Hello, world!"
+url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
+number = "4006090052010098006849819847979"
 
-console.log(encodeData(url))
+console.log(encodeData(number))
