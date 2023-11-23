@@ -10,21 +10,21 @@ function getEncodingMode(textToEncode){
   regexByte = /^[\x00-\xff]*$/;
   regexKanji = /^[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]*$/u;
   if (regexNumeric.test(textToEncode)){
-    return "0001"
+    return "0001";
   }
   
   if (regexAlphanumeric.test(textToEncode)){
-    return "0010"
+    return "0010";
   }
   
   if (regexByte.test(textToEncode)){
-    return "0100"
+    return "0100";
   }
   
   if (regexKanji.test(textToEncode)){
-    return "1000"
+    return "1000";
   } 
-  return "0111"
+  return "0111";
 }
 
 CHAR_COUNT = {
@@ -35,16 +35,23 @@ CHAR_COUNT = {
 }
 
 function getCharCount(textLength, mode){
-  binary = textLength.toString(2)
+  binary = textLength.toString(2);
   
-  return binary.padStart(CHAR_COUNT[mode], "0")
+  return binary.padStart(CHAR_COUNT[mode], "0");
+}
+
+function encodeData(textToEncode){
+  enMode = getEncodingMode(textToEncode);
+  charCount = getCharCount(textToEncode.length, enMode);
+  encodedString = ""
+  for(let index = 0; index < textToEncode.length; index++){
+    encodedString += textToEncode.charCodeAt(index).toString(2).padStart(8,"0")
+  }
+
+  return enMode + charCount + encodedString
+
 }
 
 url = "Hello, world!"
 
-console.log(url.charCodeAt(0).toString(2).padStart(8,"0"))
-
-enMode = getEncodingMode(url)
-charCount = getCharCount(url.length, enMode)
-console.log(enMode + charCount)
-
+console.log(encodeData(url))
