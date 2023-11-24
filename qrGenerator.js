@@ -1,15 +1,16 @@
 // Some hardcoded stuff
-import "usedFunctions.js"
 
-QR_VERSION = 13
-QR_ERROR_CORRECTION = "Q"
+import { splitString } from "./usedFunctions.js";
+
+const QR_VERSION = 13;
+const QR_ERROR_CORRECTION = "Q";
 
 
 function getEncodingMode(textToEncode){
-  regexNumeric = /^\d+$/;
-  regexAlphanumeric = /^[\dA-Z $%*+\-./:]*$/;
-  regexByte = /^[\x00-\xff]*$/;
-  regexKanji = /^[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]*$/u;
+  let regexNumeric = /^\d+$/;
+  let regexAlphanumeric = /^[\dA-Z $%*+\-./:]*$/;
+  let regexByte = /^[\x00-\xff]*$/;
+  let regexKanji = /^[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]*$/u;
   if (regexNumeric.test(textToEncode)){
     return "0001";
   }
@@ -28,7 +29,7 @@ function getEncodingMode(textToEncode){
   return "0111";
 }
 
-CHAR_COUNT = {
+const CHAR_COUNT = {
   "0001": 12,
   "0010": 11,
   "0100": 16,
@@ -36,19 +37,21 @@ CHAR_COUNT = {
 }
 
 function getCharCount(textLength, mode){
-  binary = textLength.toString(2);
+  let binary = textLength.toString(2);
   
   return binary.padStart(CHAR_COUNT[mode], "0");
 }
 
 function encodeData(textToEncode){
-  enMode = getEncodingMode(textToEncode);
-  charCount = getCharCount(textToEncode.length, enMode);
-  encodedString = "";
+  let enMode = getEncodingMode(textToEncode);
+  let charCount = getCharCount(textToEncode.length, enMode);
+  let encodedString = "";
 
   if (enMode == "0001"){
     // numeric
     // tengo que partir esto en grupos de 3
+    let splittedData = splitString(textToEncode)
+    console.log(splittedData)
   }
 
   if (enMode == "0010"){
@@ -73,7 +76,7 @@ function encodeData(textToEncode){
 
 }
 
-url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
-number = "4006090052010098006849819847979"
+let url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
+let number = "4006090052010098006849819847979"
 
 console.log(encodeData(number))
