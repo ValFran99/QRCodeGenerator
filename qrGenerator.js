@@ -89,8 +89,6 @@ function encodeData(textToEncode){
     // alphanumeric
     let splittedString = splitString(textToEncode, 2);
 
-    // more ugly stuff
-
     let charA = "";
     let charB = "";
     let twoChars = "";
@@ -102,27 +100,16 @@ function encodeData(textToEncode){
 
       
       charA = twoChars[0];
-
+      charB = twoChars[1];
+      charAcode = charA in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charA] : parseInt(charA, 36);
+      charBcode = charB in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charB] : parseInt(charB, 36);
       if(twoChars.length == 1){
-        charAcode = charA in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charA] : parseInt(charA, 36);
-        encodedString += " " + charAcode.toString(2).padStart(6, "0") + " ";
+        encodedString += charAcode.toString(2).padStart(6, "0");
         continue;
       }
 
-      charB = twoChars[1];
-      if(!(charA in ALPHA_SPECIAL_CODES)){
-        charAcode = parseInt(charA, 36);
-      } else{
-        charAcode = ALPHA_SPECIAL_CODES[charA];
-      }
-      if(!(charB in ALPHA_SPECIAL_CODES)){
-        charBcode = parseInt(charB, 36);
-      } else{
-        charBcode = ALPHA_SPECIAL_CODES[charB];
-      }
-      console.log(charB + charBcode)
       var medSult = (45 * charAcode) + charBcode
-      encodedString += medSult.toString(2) + " ";
+      encodedString += medSult.toString(2).padStart(11, "0");
     }
   }
 
