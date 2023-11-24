@@ -1,4 +1,5 @@
-// Some hardcoding stuff
+// Some hardcoded stuff
+import "usedFunctions.js"
 
 QR_VERSION = 13
 QR_ERROR_CORRECTION = "Q"
