@@ -1,9 +1,7 @@
-// Some hardcoded stuff
-
 import { splitString } from "./usedFunctions.js";
 
-const QR_VERSION = 13;
-const QR_ERROR_CORRECTION = "Q";
+// const QR_VERSION = 13;
+// const QR_ERROR_CORRECTION = "Q";
 const TOTAL_DATA_BITS = 1952;
 
 const CHAR_COUNT = {
@@ -24,7 +22,6 @@ const ALPHA_SPECIAL_CODES = {
   "/": 43,
   ":": 44
 }
-
 
 function getEncodingMode(textToEncode){
   let regexNumeric = /^\d+$/;
@@ -49,8 +46,6 @@ function getEncodingMode(textToEncode){
   return "0111";
 }
 
-
-
 function getCharCount(textLength, mode){
   let binary = textLength.toString(2);
   
@@ -64,54 +59,12 @@ function encodeData(textToEncode){
 
   if (enMode == "0001"){
     // numeric
-    let splittedData = splitString(textToEncode, 3);
-    let threeDigits = ""
-    let digitsInBinary = ""
-    let amountToPad = 0
-    for (let i = 0; i < splittedData.length; i++){
-      threeDigits = splittedData[i];
-      digitsInBinary = parseInt(threeDigits, 10).toString(2);
-
-      // ugly stuff incoming
-      if(threeDigits[0] == 0){
-        if(threeDigits[1] == 0){
-          amountToPad = 4;
-        } else{
-          amountToPad = 7;
-        }  
-      } else{
-        amountToPad = 10;
-      }
-      encodedString += digitsInBinary.padStart(amountToPad, "0");   
-    }
+    encodedString = encodeNumericMode(textToEncode);
   }
 
   if (enMode == "0010"){
     // alphanumeric
-    let splittedString = splitString(textToEncode, 2);
-
-    let charA = "";
-    let charB = "";
-    let twoChars = "";
-    let charAcode = 0;
-    let charBcode = 0;
-
-    for(let i = 0; i < splittedString.length; i++){
-      twoChars = splittedString[i];
-
-      
-      charA = twoChars[0];
-      charB = twoChars[1];
-      charAcode = charA in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charA] : parseInt(charA, 36);
-      charBcode = charB in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charB] : parseInt(charB, 36);
-      if(twoChars.length == 1){
-        encodedString += charAcode.toString(2).padStart(6, "0");
-        continue;
-      }
-
-      var medSult = (45 * charAcode) + charBcode
-      encodedString += medSult.toString(2).padStart(11, "0");
-    }
+    encodedString = encodeAlphanumericMode(textToEncode);
   }
 
   if (enMode == "0100"){
@@ -122,7 +75,7 @@ function encodeData(textToEncode){
   }
 
   if (enMode == "1000"){
-    // kanji, LOL
+    // kanji, never doing this
   }
 
   // adding terminator
@@ -132,8 +85,6 @@ function encodeData(textToEncode){
   encodedData = encodedData.padEnd(encodedData.length + terminator, "0");
 
   // making the length a multiple of 8
-
-  // encodedData = encodedData + "111"
 
   if (encodedData.length % 8 != 0){
     let pad = 8 - ( encodedData.length % 8 );
@@ -148,9 +99,58 @@ function encodeData(textToEncode){
   return encodedData;
 }
 
+function encodeNumericMode(textToEncode) {
 
-let url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
-let number = "40006090052010098006849819847979"
-let alpha = "HELLO WORLD"
+  let splittedData = splitString(textToEncode, 3);
+  let threeDigits = "";
+  let digitsInBinary = "";
+  let amountToPad = 0;
+  let numericEncoded = "";
+  for (let i = 0; i < splittedData.length; i++) {
+    threeDigits = splittedData[i];
+    digitsInBinary = parseInt(threeDigits, 10).toString(2);
 
-console.log(encodeData(alpha))
+    // ugly stuff incoming
+    if (threeDigits[0] == 0) {
+      if (threeDigits[1] == 0) {
+        amountToPad = 4;
+      } else {
+        amountToPad = 7;
+      }
+    } else {
+      amountToPad = 10;
+    }
+    numericEncoded += digitsInBinary.padStart(amountToPad, "0");
+  }
+  return numericEncoded;
+}
+
+function encodeAlphanumericMode(textToEncode) {
+
+  let splittedString = splitString(textToEncode, 2);
+
+  let charA = "";
+  let charB = "";
+  let twoChars = "";
+  let charAcode = 0;
+  let charBcode = 0;
+  let alphaEncoded = "";
+
+  for (let i = 0; i < splittedString.length; i++) {
+    twoChars = splittedString[i];
+
+
+    charA = twoChars[0];
+    charB = twoChars[1];
+    charAcode = charA in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charA] : parseInt(charA, 36);
+    charBcode = charB in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charB] : parseInt(charB, 36);
+    if (twoChars.length == 1) {
+      alphaEncoded += charAcode.toString(2).padStart(6, "0");
+      continue;
+    }
+
+    var medSult = (45 * charAcode) + charBcode;
+    alphaEncoded += medSult.toString(2).padStart(11, "0");
+  }
+  return alphaEncoded;
+}

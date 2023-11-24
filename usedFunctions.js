@@ -17,6 +17,4 @@ function splitString(data, n){
   return splitted
 }
 
-console.log(splitString("HELLO WORLD", 2));
-
 export { splitString };
