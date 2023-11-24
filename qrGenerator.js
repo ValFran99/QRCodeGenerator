@@ -4,6 +4,7 @@ import { splitString } from "./usedFunctions.js";
 
 const QR_VERSION = 13;
 const QR_ERROR_CORRECTION = "Q";
+const TOTAL_DATA_BITS = 1952;
 
 const CHAR_COUNT = {
   "0001": 12,
@@ -64,9 +65,9 @@ function encodeData(textToEncode){
   if (enMode == "0001"){
     // numeric
     let splittedData = splitString(textToEncode, 3);
-    var threeDigits = ""
-    var digitsInBinary = ""
-    var amountToPad = 0
+    let threeDigits = ""
+    let digitsInBinary = ""
+    let amountToPad = 0
     for (let i = 0; i < splittedData.length; i++){
       threeDigits = splittedData[i];
       digitsInBinary = parseInt(threeDigits, 10).toString(2);
@@ -124,12 +125,29 @@ function encodeData(textToEncode){
     // kanji, LOL
   }
 
-  
-  
+  // adding terminator
 
-  return enMode + charCount + encodedString;
+  let encodedData = enMode + charCount + encodedString;
+  let terminator = (TOTAL_DATA_BITS - encodedData.length < 4) ? TOTAL_DATA_BITS - encodedData.length : 4;
+  encodedData = encodedData.padEnd(encodedData.length + terminator, "0");
 
+  // making the length a multiple of 8
+
+  // encodedData = encodedData + "111"
+
+  if (encodedData.length % 8 != 0){
+    let pad = 8 - ( encodedData.length % 8 );
+    encodedData = encodedData.padEnd(encodedData.length + pad, "0");
+  }
+
+  // final padding 
+  if (encodedData.length < TOTAL_DATA_BITS){
+    encodedData = encodedData.padEnd(TOTAL_DATA_BITS, "1110110000010001");
+  }
+
+  return encodedData;
 }
+
 
 let url = "https://www.youtube.com/watch?v=FtutLA63Cp8"
 let number = "40006090052010098006849819847979"
