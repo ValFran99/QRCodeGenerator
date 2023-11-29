@@ -76,6 +76,7 @@ function encodeData(textToEncode){
 
   if (enMode == "1000"){
     // kanji, never doing this
+    return "fuck off";
   }
 
   // adding terminator
@@ -177,7 +178,10 @@ function breakIntoCodeblocks(data){
     }
   }
 
-  console.log(codeBlocks);
+  return codeBlocks;
 }
 
 breakIntoCodeblocks(encodeData("HELLO WORLD"))
+
+
+export { encodeData, breakIntoCodeblocks };

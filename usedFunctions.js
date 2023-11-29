@@ -1,3 +1,5 @@
+
+
 function splitString(data, n){
   let splitted = []
   let inter = []
@@ -33,6 +35,7 @@ function generateGaloisField(n, xorWith){
     numberToExponent[result] = i;
   }
   numberToExponent[1] = 0;
+
   return [exponentToNumber, numberToExponent];
 }
 
