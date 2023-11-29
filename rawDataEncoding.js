@@ -154,3 +154,11 @@ function encodeAlphanumericMode(textToEncode) {
   }
   return alphaEncoded;
 }
+
+function breakIntoCodeblocks(data){
+  let codewords = splitString(data, 8);
+  console.log(codewords.length);
+  console.log(codewords);
+}
+
+breakIntoCodeblocks(encodeData("HELLO WORLD"))
