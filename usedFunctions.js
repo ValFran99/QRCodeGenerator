@@ -56,8 +56,10 @@ function multiplyWithGaloisFields(numberA, numberB, galoisField){
 
 }
 
+
+
 // console.log(generateGaloisField(256, 285))
 
 // console.log(multiplyWithGaloisFields(7, 9, generateGaloisField(256, 285)))
 
-export { splitString, generateGaloisField };
+export { splitString, generateGaloisField, multiplyWithGaloisFields };

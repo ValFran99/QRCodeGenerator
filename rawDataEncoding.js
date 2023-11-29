@@ -157,8 +157,27 @@ function encodeAlphanumericMode(textToEncode) {
 
 function breakIntoCodeblocks(data){
   let codewords = splitString(data, 8);
-  console.log(codewords.length);
-  console.log(codewords);
+
+  let codeBlocks = [[], []];
+  let block = [];
+
+  for (let i = 0; i < codewords.length; i++){
+    if(codeBlocks[0].length < 8){
+      block.push(codewords[i]);
+      if(block.length == 20){
+        codeBlocks[0].push(JSON.parse(JSON.stringify(block)));
+        block = [];
+      }
+    } else{
+      block.push(codewords[i]);
+      if(block.length == 21){
+        codeBlocks[1].push(JSON.parse(JSON.stringify(block)));
+        block = [];
+      }
+    }
+  }
+
+  console.log(codeBlocks);
 }
 
 breakIntoCodeblocks(encodeData("HELLO WORLD"))
