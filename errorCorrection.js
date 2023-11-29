@@ -39,15 +39,20 @@ function createMessagePolynomial(block){
   }
 
   // now i need to transform all of these numbers into their exponents in the GF(256)
-
-
+  // for(let i = 0; i < poly.length; i++){
+  //   poly[i] = NUMBER_TO_EXPONENT[poly[i]];
+  // }
 
 
   // now we multiply the polynomial by x^24, so push -1 24 times (bc needed, idk)
   for (let i = 0; i < 24; i++ ){
-    poly.push(-1);
+    poly.push(0);
   }
   return poly;
+}
+
+function polynomialDivision(polMes, polGen){
+
 }
 
 function createErrorCorrectionCodewords(codeBlocks){
@@ -61,10 +66,13 @@ function createErrorCorrectionCodewords(codeBlocks){
   for (let i = 0; i < group1.length; i++){
     mesPoly = createMessagePolynomial(group1[i]);
     lenPoly = mesPoly.length - GEN_POLY_COEFF.length;
+    for(let j = 0; j < lenPoly; j++){
+      GEN_POLY_COEFF.push(-1);
+    }
+    // Ahora ya tengo los dos polinomios, puedo empezar a operar
 
   }
-
-  let messagePolynomial = createMessagePolynomial(codeBlocks);
+  
 }
 
-createMessagePolynomial(breakIntoCodeblocks(encodeData("HELLO WORLD")))
+createErrorCorrectionCodewords(breakIntoCodeblocks(encodeData("HELLO WORLD")))

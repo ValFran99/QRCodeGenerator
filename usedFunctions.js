@@ -42,7 +42,7 @@ function generateGaloisField(n, xorWith){
 function multiplyWithGaloisFields(numberA, numberB, galoisField){
   /* 
     recibe dos numeros decimales y devuelve la multiplicación entre ellos teniendo el cuenta el field de galois dado
-    y devuelve el resultado dentro del campo de galois
+    y devuelve el exponente resultado dentro del campo de galois
     */
 
   let exponentToNumber = galoisField[0];
