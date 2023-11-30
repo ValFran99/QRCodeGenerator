@@ -1,4 +1,4 @@
-import { encodeData, breakIntoCodeblocks } from "./rawDataEncoding.js";
+import { encodeData } from "./rawDataEncoding.js";
 import { convertToNumbers, convertToExponents } from "./usedFunctions.js";
 
 // Temp stuff
@@ -62,34 +62,35 @@ const HARD_GEN = [
 
 function polynomialDivision(polMes, polGen, polMesOGLength){
 
-  // needed because you always use the same generator at each step
+  // so I dont mutate the original generator by mistake
+  let usablePolGen = JSON.parse(JSON.stringify(polGen));
   let ogPolGen = JSON.parse(JSON.stringify(polGen));
 
   for(let i = 0; i < polMesOGLength; i++){
     let firstExponent = NUMBER_TO_EXPONENT[polMes[0]];
     // multiply the generator poly with the first term of the message poly
-    for(let j = 0; j < polGen.length; j++){
-      if(polGen[j] == -1){
+    for(let j = 0; j < usablePolGen.length; j++){
+      if(usablePolGen[j] == -1){
         continue;
       }
-      let midSult = firstExponent + polGen[j];
-      polGen[j] = midSult > 255 ? midSult % 255 : midSult;
+      let midSult = firstExponent + usablePolGen[j];
+      usablePolGen[j] = midSult > 255 ? midSult % 255 : midSult;
     }
     // convert the gen poly to integers
-    polGen = convertToNumbers(polGen, EXPONENT_TO_NUMBER);
+    usablePolGen = convertToNumbers(usablePolGen, EXPONENT_TO_NUMBER);
     
     // now we have to xor the terms of the message poly with the terms of the generator poly
-    for(let k = 0; k < polGen.length; k++){
-      if(polGen[k] == -1){
+    for(let k = 0; k < usablePolGen.length; k++){
+      if(usablePolGen[k] == -1){
         continue;
       }
-      polMes[k] = polGen[k] ^ polMes[k];
+      polMes[k] = usablePolGen[k] ^ polMes[k];
     }
     // removes the unnecesary 0 at the beginning of the new message poly
     polMes.shift();
     // so both polys have the same length
     ogPolGen.pop()
-    polGen = [...ogPolGen]
+    usablePolGen = [...ogPolGen]
 
   }
   return polMes;
@@ -103,28 +104,36 @@ function createErrorCorrectionCodewords(codeBlocks){
   let group2 = codeBlocks[1];
   let group1ECWords = [];
   let group2ECWords = [];
-  let ecWords = [];
-
-  let mesPoly = [];
-  let lenPoly = 0;
 
   for (let i = 0; i < group1.length; i++){
-    mesPoly = createMessagePolynomial(group1[i]);
-    lenPoly = mesPoly.length - GEN_POLY_COEFF.length;
-    for(let j = 0; j < lenPoly; j++){
-      GEN_POLY_COEFF.push(-1);
-    }
-    // Ahora ya tengo los dos polinomios, puedo empezar a operar
-    // You pass a copy of the generator polynomial bc if you dont the function mutates it
-    group1ECWords.push(polynomialDivision(mesPoly, [...GEN_POLY_COEFF], 20));
+    group1ECWords.push(ecCodewordsByBlock(group1[i], 20));
+  }
+
+  for (let i = 0; i < group2.length; i++){
+    group2ECWords.push(ecCodewordsByBlock(group2[i], 21));
   }
   console.log(group1ECWords);
+  console.log(group2ECWords);
   
 }
 
-createErrorCorrectionCodewords(breakIntoCodeblocks(encodeData("HELLO WORLD")))
+function ecCodewordsByBlock(block, amountOfIterations){
+  let mesPoly = [];
+  let lenPoly = 0;
+  mesPoly = createMessagePolynomial(block);
+  lenPoly = mesPoly.length - GEN_POLY_COEFF.length;
+  for(let j = 0; j < lenPoly; j++){
+    GEN_POLY_COEFF.push(-1);
+  }
+  // Ahora ya tengo los dos polinomios, puedo empezar a operar
+  // You pass a copy of the generator polynomial bc if you dont the function mutates it
+  return polynomialDivision(mesPoly, GEN_POLY_COEFF, amountOfIterations);
+
+}
+
+createErrorCorrectionCodewords(encodeData("HELLO WORLD"))
 // console.log("before first function: " + HARD_GEN)
-// console.log(polynomialDivision([...HARD_MES], [...HARD_GEN], 16));
+// console.log(polynomialDivision([...HARD_MES], HARD_GEN, 16));
 // console.log("after first function: " + HARD_GEN)
-// console.log(polynomialDivision([...HARD_MES], [...HARD_GEN], 16));
+// console.log(polynomialDivision([...HARD_MES], HARD_GEN, 16));
 // console.log("after second function: " + HARD_GEN)

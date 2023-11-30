@@ -97,7 +97,7 @@ function encodeData(textToEncode){
     encodedData = encodedData.padEnd(TOTAL_DATA_BITS, "1110110000010001");
   }
 
-  return encodedData;
+  return breakIntoCodeblocks(encodedData);
 }
 
 function encodeNumericMode(textToEncode) {
