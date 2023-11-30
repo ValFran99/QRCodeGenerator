@@ -1,4 +1,5 @@
 import { encodeData, breakIntoCodeblocks } from "./rawDataEncoding.js";
+import { convertToNumbers, convertToExponents } from "./usedFunctions.js";
 
 // Temp stuff
 
@@ -44,15 +45,62 @@ function createMessagePolynomial(block){
   // }
 
 
-  // now we multiply the polynomial by x^24, so push -1 24 times (bc needed, idk)
+  // now we multiply the polynomial by x^24, so push 0 24 times (bc needed, idk)
   for (let i = 0; i < 24; i++ ){
     poly.push(0);
   }
   return poly;
 }
 
-function polynomialDivision(polMes, polGen){
+// remember this are the actual numbers
+const HARD_MES = [
+  32, 91, 11, 120, 209, 114, 220, 77, 67, 64, 236, 17, 236, 17, 236, 17, 0,
+  0, 0, 0, 0, 0, 0, 0, 0, 0
+];
 
+const MES_LENGTH = 16;
+
+
+// remember this are the exponents
+const HARD_GEN = [
+  0, 251, 67, 46, 61, 118, 70, 64, 94, 32, 45, -1, -1, -1, -1, -1, -1, -1, -1,
+   -1, -1, -1, -1, -1, -1, -1
+];
+
+
+
+function polynomialDivision(polMes, polGen){
+  let ogPolGen = JSON.parse(JSON.stringify(polGen))
+
+  for(let i = 0; i < MES_LENGTH; i++){
+    let firstExponent = NUMBER_TO_EXPONENT[polMes[0]];
+    // multiply the generator poly with the first term of the message poly
+    console.log("polGen before multi: " + polGen)
+    for(let j = 0; j < polGen.length; j++){
+      if(polGen[j] == -1){
+        continue;
+      }
+      let midSult = firstExponent + polGen[j];
+      polGen[j] = midSult > 255 ? midSult % 255 : midSult;
+    }
+    console.log("polGen after multiplication: " + polGen);
+    // convert the gen poly to integers
+    polGen = convertToNumbers(polGen, EXPONENT_TO_NUMBER);
+    console.log("polGen after numbers: " + polGen);
+    // console.log(polMes);
+    
+    // now we have to xor the terms of the message poly with the terms of the generator poly
+    for(let k = 0; k < polGen.length; k++){
+      if(polGen[k] == -1){
+        continue;
+      }
+      polMes[k] = polGen[k] ^ polMes[k];
+    }
+    polMes.shift();
+    console.log("\npolMessage: " + polMes + "\n");
+
+  }
+  console.log(polMes)
 }
 
 function createErrorCorrectionCodewords(codeBlocks){
@@ -72,7 +120,9 @@ function createErrorCorrectionCodewords(codeBlocks){
     // Ahora ya tengo los dos polinomios, puedo empezar a operar
 
   }
-  
+  console.log(mesPoly);
+  console.log(GEN_POLY_COEFF);
 }
 
-createErrorCorrectionCodewords(breakIntoCodeblocks(encodeData("HELLO WORLD")))
+// createErrorCorrectionCodewords(breakIntoCodeblocks(encodeData("HELLO WORLD")))
+polynomialDivision(HARD_MES, HARD_GEN);

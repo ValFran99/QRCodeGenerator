@@ -59,10 +59,29 @@ function multiplyWithGaloisFields(numberA, numberB, galoisField){
 
 }
 
+function convertToNumbers(polyInExponents, exponentToNumber){
+  for(let i = 0; i < polyInExponents.length; i++){
+    if(polyInExponents[i] == -1){
+      continue;
+    }
+    polyInExponents[i] = exponentToNumber[polyInExponents[i]];
+  }
+  return polyInExponents;
+}
+
+function convertToExponents(polyInNumbers, numberToExponent){
+  for(let i = 0; i < polyInNumbers.length; i++){
+    if(polyInNumbers[i] == -1){
+      continue;
+    }
+    polyInNumbers[i] = numberToExponent[polyInNumbers[i]];
+  }
+  return polyInNumbers;
+}
 
 
 // console.log(generateGaloisField(256, 285))
 
 // console.log(multiplyWithGaloisFields(7, 9, generateGaloisField(256, 285)))
 
-export { splitString, generateGaloisField, multiplyWithGaloisFields };
+export { splitString, generateGaloisField, multiplyWithGaloisFields, convertToNumbers, convertToExponents};
