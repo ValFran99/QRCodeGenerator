@@ -93,7 +93,18 @@ function polynomialDivision(polMes, polGen, polMesOGLength){
     usablePolGen = [...ogPolGen]
 
   }
-  return polMes;
+
+
+
+  return decArrToBinary(polMes);
+}
+
+function decArrToBinary(arr){
+  let binArr = [];
+  for (let i = 0; i < arr.length; i++){
+    binArr.push(arr[i].toString(2).padStart(8, "0"));
+  }
+  return binArr
 }
 
 // this depends on the length of the original message polynomials, that depends on the amount of codewords per block
@@ -112,8 +123,7 @@ function createErrorCorrectionCodewords(codeBlocks){
   for (let i = 0; i < group2.length; i++){
     group2ECWords.push(ecCodewordsByBlock(group2[i], 21));
   }
-  console.log(group1ECWords);
-  console.log(group2ECWords);
+  return [group1ECWords, group2ECWords]
   
 }
 
@@ -126,14 +136,15 @@ function ecCodewordsByBlock(block, amountOfIterations){
     GEN_POLY_COEFF.push(-1);
   }
   // Ahora ya tengo los dos polinomios, puedo empezar a operar
-  // You pass a copy of the generator polynomial bc if you dont the function mutates it
   return polynomialDivision(mesPoly, GEN_POLY_COEFF, amountOfIterations);
 
 }
 
-createErrorCorrectionCodewords(encodeData("HELLO WORLD"))
+// createErrorCorrectionCodewords(encodeData("HELLO WORLD"))
 // console.log("before first function: " + HARD_GEN)
 // console.log(polynomialDivision([...HARD_MES], HARD_GEN, 16));
 // console.log("after first function: " + HARD_GEN)
 // console.log(polynomialDivision([...HARD_MES], HARD_GEN, 16));
 // console.log("after second function: " + HARD_GEN)
+
+export { createErrorCorrectionCodewords };

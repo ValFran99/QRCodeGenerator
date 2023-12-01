@@ -1,4 +1,5 @@
 import { splitString } from "./usedFunctions.js";
+import { createErrorCorrectionCodewords } from "./errorCorrection.js";
 
 // const QR_VERSION = 13;
 // const QR_ERROR_CORRECTION = "Q";
@@ -97,7 +98,50 @@ function encodeData(textToEncode){
     encodedData = encodedData.padEnd(TOTAL_DATA_BITS, "1110110000010001");
   }
 
-  return breakIntoCodeblocks(encodedData);
+  let codeWords = breakIntoCodeblocks(encodedData);
+  let ecCodeWords = createErrorCorrectionCodewords(codeWords);
+
+  let finalMessage = interleaveCW(codeWords, 1, 7, 4, 21);
+
+  finalMessage += interleaveCW(ecCodeWords, 1, 7, 4, 24);
+
+  return finalMessage;
+}
+
+function interleaveCW(words, limitGroup, limitFstBlock, limitSecBlock, limitCodeWord){
+
+  let group = 0;
+  let block = 0;
+  let codeWord = 0;
+
+  let interleavedWords = "";
+
+  while(true){
+    // this thing should depend on the version and ec correction of the choose qr code, but fuck that
+    if(group == limitGroup && block == limitSecBlock && codeWord == limitCodeWord){
+      break;
+    }
+    if(group == limitGroup && block == limitSecBlock){
+      codeWord++;
+      group = 0;
+      block = 0;
+      continue;
+    }
+
+    let cw = words[group][block][codeWord];
+    if (cw != undefined){
+      interleavedWords += words[group][block][codeWord];
+    }
+
+    if(block == limitFstBlock){
+      block = 0;
+      group = 1;
+      continue;
+    }
+    block++;
+
+  }
+  return interleavedWords;
 }
 
 function encodeNumericMode(textToEncode) {
@@ -181,7 +225,6 @@ function breakIntoCodeblocks(data){
   return codeBlocks;
 }
 
-breakIntoCodeblocks(encodeData("HELLO WORLD"))
-
+encodeData("HELLO WORLD")
 
 export { encodeData, breakIntoCodeblocks };
