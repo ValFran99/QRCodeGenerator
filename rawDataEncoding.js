@@ -225,6 +225,6 @@ function breakIntoCodeblocks(data){
   return codeBlocks;
 }
 
-encodeData("HELLO WORLD")
+// console.log(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o"));
 
 export { encodeData, breakIntoCodeblocks };
