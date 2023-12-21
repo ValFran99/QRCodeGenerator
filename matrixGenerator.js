@@ -4,7 +4,7 @@ function calculateSizeByVersion(versionNumber){
   return (((versionNumber - 1) * 4) + 21);
 }
 
-function createFinderPattern(matrix, topLeftCoords){
+function addFinderPatterns(matrix, topLeftCoords){
 
   let finderPattern = [
     [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]],
@@ -42,7 +42,7 @@ function createFinderPattern(matrix, topLeftCoords){
 
 }
 
-function createAlignmentPattern(matrix, topLeftCoords){
+function addAlignmentPatterns(matrix, topLeftCoords){
   let alignmentPattern = [
     [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1]],
     [[1, 1], [0, 1], [0, 1], [0, 1], [1, 1]],
@@ -71,30 +71,107 @@ function createAlignmentPattern(matrix, topLeftCoords){
 
 }
 
+function addTimingPatterns(matrix){
+  
+  let flipper = true;
+  let change;
+  for(let i = 8; i < 61; i++){
+    change = (flipper) ? [1, 1] : [0, 1];
+    matrix[6][i] = change;
+    matrix[i][6] = change;
+
+    flipper = !flipper
+
+  }
+}
+
+function reserveSpaceForFormat(matrix){
+
+  // for the top left finder
+  for(let i = 0; i < 9; i++){
+    if(i == 6){
+      continue;
+    }
+    matrix[8][i] = [0, 1];
+    matrix[i][8] = [0, 1];
+  }
+
+  // top right finder
+
+  for(let i = matrix.length - 8; i < matrix.length; i++){
+    matrix[8][i] = [0, 1];
+  }
+
+  for(let i = matrix.length - 7; i < matrix.length; i++){
+    matrix[i][8] = [0, 1];
+  }
+
+}
+
+function reserveSpaceForVersion(matrix, figure, topLeftCoords){
+
+  let startX = topLeftCoords[0];
+  let startY = topLeftCoords[1];
+
+
+  for(let figureCol = 0; figureCol < figure.length; figureCol++){
+    for(let figureRow = 0; figureRow < figure[0].length; figureRow++){
+      if(matrix[startX + figureCol][startY + figureRow] != undefined){
+        continue;
+      }
+      matrix[startX + figureCol][startY + figureRow] = figure[figureCol][figureRow];
+
+    }
+  }
+}
+
 function createMatrix(data, version){
   let size = calculateSizeByVersion(version);
   let matrix = Array(size).fill().map(() => Array(size).fill())
 
   // Adds the finder patterns
-  createFinderPattern(matrix, [0, 0]);
-  createFinderPattern(matrix, [size - 7, 0]);
-  createFinderPattern(matrix, [0, size - 7]);
+  addFinderPatterns(matrix, [0, 0]);
+  addFinderPatterns(matrix, [size - 7, 0]);
+  addFinderPatterns(matrix, [0, size - 7]);
 
-  createAlignmentPattern(matrix, [[3, 31], [31, 3], [31, 31], [31, 59], [59, 31], [59, 59]])
+  addAlignmentPatterns(matrix, [[4, 32], [32, 4], [32, 32], [32, 60], [60, 32], [60, 60]])
 
-  // Adds the
+  addTimingPatterns(matrix);
 
-  printMatrix(matrix, size);
+  // For the dark module
 
-  // console.log(matrix)
-  // addFinderPatterns(matrix, size);
+  matrix[61][8] = [1, 1];
+
+  reserveSpaceForFormat(matrix)
+
+  let version1 = [
+    [[0, 1], [0, 1], [0, 1]],
+    [[0, 1], [0, 1], [0, 1]],
+    [[0, 1], [0, 1], [0, 1]],
+    [[0, 1], [0, 1], [0, 1]],
+    [[0, 1], [0, 1], [0, 1]],
+    [[0, 1], [0, 1], [0, 1]]
+  ];
+
+  let version2 = [
+    [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]],
+    [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]],
+    [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
+  ];
+
+  reserveSpaceForVersion(matrix, version1, [0, 58]);
+
+  reserveSpaceForVersion(matrix, version2, [58, 0]);
+  
+  printMatrix(matrix);
+
   return matrix;
 }
 
-function printMatrix(matrix, size){
+function printMatrix(matrix){
   let line = "";
-  for(let i = 0; i < size; i++){
-    for(let j = 0; j < size; j++){
+  for(let i = 0; i < matrix.length; i++){
+    for(let j = 0; j < matrix.length; j++){
       if(matrix[i][j] == undefined){
         line += "#";
         continue;
