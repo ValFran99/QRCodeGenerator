@@ -7,13 +7,15 @@ function calculateSizeByVersion(versionNumber){
 function createFinderPattern(matrix, topLeftCoords){
 
   let finderPattern = [
-    [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]],
-    [[1, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [1, 1]],
-    [[1, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1], [1, 1]],
-    [[1, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1], [1, 1]],
-    [[1, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1], [1, 1]],
-    [[1, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [1, 1]],
-    [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]]
+    [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]],
+    [[0, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [0, 1]],
+    [[0, 1], [1, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [1, 1], [0, 1]],
+    [[0, 1], [1, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1], [1, 1], [0, 1]],
+    [[0, 1], [1, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1], [1, 1], [0, 1]],
+    [[0, 1], [1, 1], [0, 1], [1, 1], [1, 1], [1, 1], [0, 1], [1, 1], [0, 1]],
+    [[0, 1], [1, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [1, 1], [0, 1]],
+    [[0, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [0, 1]],
+    [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
   ]
 
   // console.log(finderPattern)
@@ -21,19 +23,35 @@ function createFinderPattern(matrix, topLeftCoords){
   let startX = topLeftCoords[0];
   let startY = topLeftCoords[1];
 
-  for(let finderCol = 0; finderCol < 7; finderCol++){
-    for(let finderRow = 0; finderRow < 7; finderRow++){
-      matrix[startX + finderCol][startY + finderRow] = finderPattern[finderCol][finderRow]
+  let relativeX = 0;
+  let relativeY = 0;
+
+  for(let finderCol = 0; finderCol < finderPattern.length; finderCol++){
+    for(let finderRow = 0; finderRow < finderPattern.length; finderRow++){
+
+      relativeX = startX + finderCol - 1
+      relativeY = startY + finderRow - 1
+
+      if (relativeX < 0 || relativeY < 0 || relativeX >= matrix.length || relativeY >= matrix.length){
+        continue;
+      }
+
+      matrix[relativeX][relativeY] = finderPattern[finderCol][finderRow]
     }
   }
+
 }
 
 function createMatrix(data, version){
   let size = calculateSizeByVersion(version);
   let matrix = Array(size).fill().map(() => Array(size).fill())
+
+  // Adds the finder patterns
   createFinderPattern(matrix, [0, 0]);
   createFinderPattern(matrix, [size - 7, 0]);
   createFinderPattern(matrix, [0, size - 7]);
+
+  // Adds the
 
   printMatrix(matrix, size);
 
