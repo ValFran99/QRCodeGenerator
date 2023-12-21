@@ -42,6 +42,35 @@ function createFinderPattern(matrix, topLeftCoords){
 
 }
 
+function createAlignmentPattern(matrix, topLeftCoords){
+  let alignmentPattern = [
+    [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1]],
+    [[1, 1], [0, 1], [0, 1], [0, 1], [1, 1]],
+    [[1, 1], [0, 1], [1, 1], [0, 1], [1, 1]],
+    [[1, 1], [0, 1], [0, 1], [0, 1], [1, 1]],
+    [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1]]
+  ]
+
+  for(let i = 0; i < topLeftCoords.length; i++){
+    let startX = topLeftCoords[i][0];
+    let startY = topLeftCoords[i][1];
+
+    let relativeX = 0;
+    let relativeY = 0;
+
+    for(let alignmentCol = 0; alignmentCol < alignmentPattern.length; alignmentCol++){
+      for(let alignmentRow = 0; alignmentRow < alignmentPattern.length; alignmentRow++){
+
+        relativeX = startX + alignmentCol
+        relativeY = startY + alignmentRow
+
+        matrix[relativeX][relativeY] = alignmentPattern[alignmentCol][alignmentRow]
+      }
+    }
+  }
+
+}
+
 function createMatrix(data, version){
   let size = calculateSizeByVersion(version);
   let matrix = Array(size).fill().map(() => Array(size).fill())
@@ -50,6 +79,8 @@ function createMatrix(data, version){
   createFinderPattern(matrix, [0, 0]);
   createFinderPattern(matrix, [size - 7, 0]);
   createFinderPattern(matrix, [0, size - 7]);
+
+  createAlignmentPattern(matrix, [[3, 31], [31, 3], [31, 31], [31, 59], [59, 31], [59, 59]])
 
   // Adds the
 
