@@ -1,4 +1,4 @@
-// import { encodeData } from "./rawDataEncoding.js";
+import { encodeData } from "./rawDataEncoding.js";
 
 function calculateSizeByVersion(versionNumber){
   return (((versionNumber - 1) * 4) + 21);
@@ -162,11 +162,68 @@ function createMatrix(data, version){
   reserveSpaceForVersion(matrix, version1, [0, 58]);
 
   reserveSpaceForVersion(matrix, version2, [58, 0]);
-  
+
+  printMatrix(matrix);
+  fillPattern(matrix, data);
   printMatrix(matrix);
 
   return matrix;
 }
+
+function fillPattern(matrix, dataPattern){
+
+  let size = matrix.length;
+  let binaryIndex = 0;
+  let i = 14;
+  let j = 61;
+  let lastJ = size - 1;
+  while(binaryIndex < dataPattern.length){
+    // console.log("j is in the upwards: " + j);
+    for(i = size - 1; i >= 0; i--){
+      for(j = lastJ; j > lastJ - 2; j--){
+        if(undefined != matrix[i][j]){
+          continue;
+        }
+        matrix[i][j] = [dataPattern[binaryIndex], "1"]
+        // printMatrix(matrix);
+        binaryIndex++;
+        
+      }
+    }
+    // To stop the second loop from executing at the end
+    if(j < 0){
+      break;
+    }
+
+    lastJ = j;
+
+    // console.log("j is in the downwards: " + j);
+    if(j == 6){
+      lastJ = 5;
+      continue;
+    }
+
+    for(i = 0; i < size; i++){
+      for(j = lastJ; j > lastJ - 2; j--){
+        if(undefined != matrix[i][j]){
+          continue;
+        }
+        matrix[i][j] = [dataPattern[binaryIndex], "1"]
+        // printMatrix(matrix);
+        binaryIndex++;
+      }
+    }
+    // To skip the vertical alignment pattern thats always on the coord 6, 6
+    if(j == 6){
+      lastJ = 5;
+      continue;
+    }
+    lastJ = j;
+
+  }
+
+}
+
 
 function printMatrix(matrix){
   let line = "";
@@ -184,4 +241,4 @@ function printMatrix(matrix){
   console.log(" ");
 }
 
-createMatrix("011101", 13);
+createMatrix(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o"), 13);
