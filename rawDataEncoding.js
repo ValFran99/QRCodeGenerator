@@ -1,6 +1,6 @@
 import { splitString } from "./usedFunctions.js";
 import { createErrorCorrectionCodewords } from "./errorCorrection.js";
-
+// Usable versions 3, 6, 7, 13, 20, 30
 // const QR_VERSION = 13;
 // const QR_ERROR_CORRECTION = "Q";
 const TOTAL_DATA_BITS = 1952;

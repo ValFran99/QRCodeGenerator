@@ -33,7 +33,6 @@ function applyMask(matrix, maskFormula){
   return matrix;
 }
 
-// Usando la mask 7
 
 function createFormatString(ecLevel, maskPattern){
   let ecLevelToBin = {
@@ -42,43 +41,42 @@ function createFormatString(ecLevel, maskPattern){
     "Q": "11",
     "H": "10"
   };
-  console.log(ecLevelToBin[ecLevel]);
 
   let binaryMaskPattern = maskPattern.toString(2).padStart(3);
   let formatString = ecLevelToBin[ecLevel] + binaryMaskPattern;
-  console.log("init formatString: " + formatString);
+  let ecFormatString = formatString;
   let generatorFormatString = "10100110111";
   // now we divide the format string by the generator n times
   
   // we add zeroes to the right to form a 15 bit string
   let regex = /(^0+)/g;
-  formatString = formatString.padEnd(15, "0");
+  ecFormatString = ecFormatString.padEnd(15, "0");
   // and remove the leading zeroes if necessary
-  console.log(formatString.search(regex));
-  formatString = formatString.replace(regex, "");
+  ecFormatString = ecFormatString.replace(regex, "");
   
-  
-  console.log("formatString now before loop: " + formatString);
   let tempGeneratorFormatString = "";
-  console.log("generatorString before loop:  " + generatorFormatString);
   
+  while(ecFormatString.length > 11){
+    tempGeneratorFormatString = generatorFormatString.padEnd(ecFormatString.length, "0");
 
-  while(formatString.length > 11){
-    console.log(formatString.length)
-    tempGeneratorFormatString = generatorFormatString.padEnd(formatString.length, "0");
-
-    console.log("im xoring these generator: " + tempGeneratorFormatString);
-    console.log("and this formatString:     " + formatString);
-    formatString =  (parseInt(tempGeneratorFormatString, 2) ^ parseInt(formatString, 2)).toString(2);
-    console.log("resulting in: " + formatString);
+    ecFormatString =  (parseInt(tempGeneratorFormatString, 2) ^ parseInt(ecFormatString, 2)).toString(2);
 
   }
 
-  console.log("im xoring these generator: " + generatorFormatString);
-  console.log("and this formatString:     " + formatString);
+  ecFormatString = (parseInt(generatorFormatString, 2) ^ parseInt(ecFormatString, 2)).toString(2);
 
-  formatString = (parseInt(generatorFormatString, 2) ^ parseInt(formatString, 2)).toString(2);
-  return formatString;
+  let finalFormatString = formatString + ecFormatString.padEnd(10);
+  let lastXorString = "101010000010010";
+
+  return (parseInt(finalFormatString, 2) ^ parseInt(lastXorString, 2)).toString(2).padStart(15, "0");
+}
+
+// Usable versions 3, 6, 7, 13, 20, 30
+var VERSION_STRINGS = {
+  7: "000111110010010100",
+  13: "001101100001000111",
+  20: "010100100110100110",
+  30: "011110110101110101"
 }
 
 console.log(createFormatString("Q", 7));
