@@ -79,6 +79,12 @@ function convertToExponents(polyInNumbers, numberToExponent){
   return polyInNumbers;
 }
 
+function checkFirstPenaltyScore(matrix){
+  
+}
+
+
+
 
 // console.log(generateGaloisField(256, 285))
 

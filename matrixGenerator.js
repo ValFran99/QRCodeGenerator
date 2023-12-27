@@ -163,9 +163,9 @@ function createMatrix(data, version){
 
   reserveSpaceForVersion(matrix, version2, [58, 0]);
 
-  printMatrix(matrix);
+  // printMatrix(matrix);
   fillPattern(matrix, data);
-  printMatrix(matrix);
+  // printMatrix(matrix);
 
   return matrix;
 }
@@ -184,7 +184,7 @@ function fillPattern(matrix, dataPattern){
         if(undefined != matrix[i][j]){
           continue;
         }
-        matrix[i][j] = [dataPattern[binaryIndex], "1"]
+        matrix[i][j] = [dataPattern[binaryIndex], "0"]
         // printMatrix(matrix);
         binaryIndex++;
         
@@ -208,7 +208,7 @@ function fillPattern(matrix, dataPattern){
         if(undefined != matrix[i][j]){
           continue;
         }
-        matrix[i][j] = [dataPattern[binaryIndex], "1"]
+        matrix[i][j] = [dataPattern[binaryIndex], "0"]
         // printMatrix(matrix);
         binaryIndex++;
       }
@@ -241,4 +241,6 @@ function printMatrix(matrix){
   console.log(" ");
 }
 
-createMatrix(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o"), 13);
+export {createMatrix, printMatrix}
+
+// createMatrix(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o"), 13);
