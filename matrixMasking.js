@@ -79,10 +79,68 @@ var VERSION_STRINGS = {
   30: "011110110101110101"
 }
 
-console.log(createFormatString("Q", 7));
-console.log(createFormatString("L", 4));
-// var matrix = createMatrix(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o"), 13);
+// console.log(createFormatString("Q", 7));
+// console.log(createFormatString("L", 4));
 
+
+// To do so i can at least test if it works
+function fillWithFormatString(matrix, usedMask, ecLevel){
+  let formatString = createFormatString(ecLevel, usedMask);
+  
+  var indexStringStart = 0;
+  var indexStringMid = 6;
+  var indexStringEnd = 14;
+
+  // fill top left finder
+  for(let indexMatrix = 0; indexMatrix < 9; indexMatrix++){
+    if(indexMatrix == 6){
+      continue;
+    }
+    matrix[8][indexMatrix] = [formatString[indexStringStart], 1];
+    matrix[indexMatrix][8] = [formatString[indexStringEnd], 1];
+    indexStringStart++;
+    indexStringEnd--;
+  }
+
+  // fill the bottom left pattern
+  for(let i = matrix.length - 7; i < matrix.length; i++){
+    matrix[i][8] = [formatString[indexStringMid], 1];
+    indexStringMid--;
+  }
+  indexStringStart = 7
+  // and the top right pattern
+  for(let i = matrix.length - 8; i < matrix.length; i++){
+    matrix[8][i] = [formatString[indexStringStart], 1];
+    indexStringStart++;
+  }
+  
+}
+
+function fillWithVersionString(matrix, version){
+  let versionString = VERSION_STRINGS[version];
+  let indexString = 0;
+
+  // fills bottom left rectangle
+  for(let indexCol = 0; indexCol < 6; indexCol++){
+    for(let indexRow = matrix.length - 11; indexRow < matrix.length - 8; indexRow++){
+      matrix[indexRow][indexCol] = versionString[indexString];
+      matrix[indexCol][indexRow] = versionString[indexString];
+      indexString++;
+    }
+  }
+
+  // fills top rigth rectangle
+
+}
+var matrix = createMatrix(encodeData("hello world"), 13);
+
+// console.log("seventh mask")
+
+var matrixMask7 = applyMask(matrix, maskFormula7)
+// printMatrix(matrixMask7)
+fillWithFormatString(matrixMask7, 7, "Q");
+fillWithVersionString(matrixMask7, 13);
+printMatrix(matrixMask7)
 // console.log("basic matrix")
 
 // printMatrix(matrix)
@@ -121,10 +179,6 @@ console.log(createFormatString("L", 4));
 // var mask5 = applyMask(matrixCopy, maskFormula5)
 // printMatrix(mask5)
 
-// console.log("seventh mask")
-
-// var mask6 = applyMask(matrixCopy, maskFormula6)
-// printMatrix(mask6)
 
 // console.log("eigth mask")
 

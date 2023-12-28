@@ -3,13 +3,23 @@ import { createErrorCorrectionCodewords } from "./errorCorrection.js";
 // Usable versions 3, 6, 7, 13, 20, 30
 // const QR_VERSION = 13;
 // const QR_ERROR_CORRECTION = "Q";
+// For version 13 and error correction q
 const TOTAL_DATA_BITS = 1952;
+// for version 1 and error correction q is different
 
 const CHAR_COUNT = {
-  "0001": 12,
-  "0010": 11,
-  "0100": 16,
-  "1000": 10
+  "1-9": {
+    "0001": 10,
+    "0010": 9,
+    "0100": 8,
+    "1000": 8
+  },
+  "10-26": {
+    "0001": 12,
+    "0010": 11,
+    "0100": 16,
+    "1000": 10
+  }
 }
 
 const ALPHA_SPECIAL_CODES = {
@@ -47,15 +57,25 @@ function getEncodingMode(textToEncode){
   return "0111";
 }
 
-function getCharCount(textLength, mode){
+function getCharCount(textLength, mode, versionRange){
   let binary = textLength.toString(2);
   
-  return binary.padStart(CHAR_COUNT[mode], "0");
+  return binary.padStart(CHAR_COUNT[versionRange][mode], "0");
 }
 
-function encodeData(textToEncode){
+function encodeData(textToEncode, version, ecMode){
+
+  let versionRange;
+
+  if(version < 10){
+    versionRange = "1-9"
+  } else if (version < 27){
+    versionRange = "10-26";
+  } else{
+    versionRange = "27-40";
+  }
   let enMode = getEncodingMode(textToEncode);
-  let charCount = getCharCount(textToEncode.length, enMode);
+  let charCount = getCharCount(textToEncode.length, enMode, versionRange);
   let encodedString = "";
 
   if (enMode == "0001"){
@@ -225,6 +245,6 @@ function breakIntoCodeblocks(data){
   return codeBlocks;
 }
 
-// console.log(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o"));
+// console.log(encodeData("HELLO WORLD"));
 
 export { encodeData, breakIntoCodeblocks };
