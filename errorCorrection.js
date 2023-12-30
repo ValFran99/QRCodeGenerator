@@ -1,4 +1,4 @@
-import { encodeData } from "./rawDataEncoding.js";
+import { encodeData, DATA_BY_VERSION_AND_ECLEVEL } from "./rawDataEncoding.js";
 import { convertToNumbers, convertToExponents } from "./usedFunctions.js";
 
 // Temp stuff
@@ -28,10 +28,35 @@ const NUMBER_TO_EXPONENT = [0,0,1,25,2,50,26,198,3,223,51,238,27,104,199,75,4,10
                             204,62,90,203,89,95,176,156,169,160,81,11,245,22,235,122,117,44,215,79,174,213,233,230,
                             231,173,232,116,214,244,234,168,80,88,175];
 
-const GEN_POLY_COEFF = [0, 229, 121, 135, 48, 211, 117, 251, 126, 159, 180, 169,
-  152, 192, 226, 228, 218, 111, 0, 117, 232, 87, 96, 227, 21];
+const GEN_POLY_COEFF_BY_VERSION_AND_ECMODE = {
+  1: {
+    "L": [0, 87, 229, 146, 149, 238, 102, 21],
+    "M": [0, 251, 67, 46, 61, 118, 70, 64, 94, 32, 45],
+    "Q": [0, 74, 152, 176, 100, 86, 100, 106, 104, 130, 218, 206, 140, 78],
+    "H": [0, 43, 139, 206, 78, 43, 239, 123, 206, 214, 147, 24, 99, 150, 39, 243, 163, 136]
+  },
+  13: {
+    "Q": [0, 229, 121, 135, 48, 211, 117, 251, 126, 159, 180, 169,
+      152, 192, 226, 228, 218, 111, 0, 117, 232, 87, 96, 227, 21]
+  }
+}
 
-function createMessagePolynomial(block){
+const EC_CODWORDS_PER_BLOCK = {
+  1: {
+    "L": 7,
+    "M": 10,
+    "Q": 13,
+    "H": 17
+  },
+  13: {
+    "Q": 24
+  }
+}
+
+// const GEN_POLY_COEFF_BY_VERSION_AND_ECMODE = [0, 229, 121, 135, 48, 211, 117, 251, 126, 159, 180, 169,
+//   152, 192, 226, 228, 218, 111, 0, 117, 232, 87, 96, 227, 21];
+
+function createMessagePolynomial(block, version, ecMode){
   let codeword = "";
   let poly = [];
   for(let i = 0; i < block.length; i++){
@@ -39,8 +64,8 @@ function createMessagePolynomial(block){
     poly.push(parseInt(codeword, 2));
   }
 
-  // now we multiply the polynomial by x^24, so push 0 24 times (bc needed, idk)
-  for (let i = 0; i < 24; i++ ){
+  // now we multiply the polynomial by x^n, with n being the no. of ec codewords needed per block
+  for (let i = 0; i < EC_CODWORDS_PER_BLOCK[version][ecMode]; i++ ){
     poly.push(0);
   }
   return poly;
@@ -109,7 +134,7 @@ function decArrToBinary(arr){
 
 // this depends on the length of the original message polynomials, that depends on the amount of codewords per block
 
-function createErrorCorrectionCodewords(codeBlocks){
+function createErrorCorrectionCodewords(codeBlocks, version, ecMode){
 
   let group1 = codeBlocks[0];
   let group2 = codeBlocks[1];
@@ -117,26 +142,27 @@ function createErrorCorrectionCodewords(codeBlocks){
   let group2ECWords = [];
 
   for (let i = 0; i < group1.length; i++){
-    group1ECWords.push(ecCodewordsByBlock(group1[i], 20));
+    group1ECWords.push(ecCodewordsByBlock(group1[i], DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"].codewordsPerBlock1, version, ecMode));
   }
 
   for (let i = 0; i < group2.length; i++){
-    group2ECWords.push(ecCodewordsByBlock(group2[i], 21));
+    group2ECWords.push(ecCodewordsByBlock(group2[i], DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"].codewordsPerBlock2, version, ecMode));
   }
   return [group1ECWords, group2ECWords]
   
 }
 
-function ecCodewordsByBlock(block, amountOfIterations){
+function ecCodewordsByBlock(block, amountOfIterations, version, ecMode){
   let mesPoly = [];
   let lenPoly = 0;
-  mesPoly = createMessagePolynomial(block);
-  lenPoly = mesPoly.length - GEN_POLY_COEFF.length;
+  mesPoly = createMessagePolynomial(block, version, ecMode);
+  console.log(mesPoly)
+  lenPoly = mesPoly.length - GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[version][ecMode].length;
   for(let j = 0; j < lenPoly; j++){
-    GEN_POLY_COEFF.push(-1);
+    GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[version][ecMode].push(-1);
   }
   // Ahora ya tengo los dos polinomios, puedo empezar a operar
-  return polynomialDivision(mesPoly, GEN_POLY_COEFF, amountOfIterations);
+  return polynomialDivision(mesPoly, GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[version][ecMode], amountOfIterations);
 
 }
 

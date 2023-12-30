@@ -4,7 +4,66 @@ import { createErrorCorrectionCodewords } from "./errorCorrection.js";
 // const QR_VERSION = 13;
 // const QR_ERROR_CORRECTION = "Q";
 // For version 13 and error correction q
-const TOTAL_DATA_BITS = 1952;
+// const TOTAL_BITS = 1952;
+
+// const DATA_BY_VERSION_AND_ECLEVEL = {
+//   1: {
+//     "L": 152,
+//     "M": 128,
+//     "Q": 104,
+//     "H": 72
+//   },
+//   13: {
+//     "Q": 1952
+//   }
+// }
+
+const DATA_BY_VERSION_AND_ECLEVEL = {
+  1: {
+    "L": {
+      "totalDataBits": 152,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 19,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 128,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 16,
+        "codeWordsPerBlock2": 0,
+      }
+    },
+    "Q": {
+      "totalDataBits": 104,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 13,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "H": {
+      "totalDataBits": 72,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 9,
+        "codeWordsPerBlock2": 0
+      }
+    }
+  },
+  13: {
+    "Q": {
+      "totalDataBits": 1952,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 8,
+        "codewordsPerBlock1": 20,
+        "codeWordsPerBlock2": 21
+      }
+    }
+  }
+};
 // for version 1 and error correction q is different
 
 const CHAR_COUNT = {
@@ -99,11 +158,14 @@ function encodeData(textToEncode, version, ecMode){
     // kanji, never doing this
     return "fuck off";
   }
-
+  
   // adding terminator
 
   let encodedData = enMode + charCount + encodedString;
-  let terminator = (TOTAL_DATA_BITS - encodedData.length < 4) ? TOTAL_DATA_BITS - encodedData.length : 4;
+
+  console.log("encoded data before any padding: " + encodedData);
+
+  let terminator = (DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length < 4) ? DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length : 4;
   encodedData = encodedData.padEnd(encodedData.length + terminator, "0");
 
   // making the length a multiple of 8
@@ -114,12 +176,16 @@ function encodeData(textToEncode, version, ecMode){
   }
 
   // final padding 
-  if (encodedData.length < TOTAL_DATA_BITS){
-    encodedData = encodedData.padEnd(TOTAL_DATA_BITS, "1110110000010001");
+  if (encodedData.length < DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"]){
+    encodedData = encodedData.padEnd(DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"], "1110110000010001");
   }
 
-  let codeWords = breakIntoCodeblocks(encodedData);
-  let ecCodeWords = createErrorCorrectionCodewords(codeWords);
+  console.log("encoded data after padding: " + encodedData);
+
+  let codeWords = breakIntoCodeblocks(encodedData, version, ecMode);
+  console.log("The codewords: ");
+  console.log(codeWords)
+  let ecCodeWords = createErrorCorrectionCodewords(codeWords, version, ecMode);
 
   let finalMessage = interleaveCW(codeWords, 1, 7, 4, 21);
 
@@ -220,22 +286,22 @@ function encodeAlphanumericMode(textToEncode) {
   return alphaEncoded;
 }
 
-function breakIntoCodeblocks(data){
+function breakIntoCodeblocks(data, version, ecMode){
   let codewords = splitString(data, 8);
 
   let codeBlocks = [[], []];
   let block = [];
 
   for (let i = 0; i < codewords.length; i++){
-    if(codeBlocks[0].length < 8){
+    if(codeBlocks[0].length < DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"]["blocksInGroup1"]){
       block.push(codewords[i]);
-      if(block.length == 20){
+      if(block.length == DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"].codewordsPerBlock1){
         codeBlocks[0].push(JSON.parse(JSON.stringify(block)));
         block = [];
       }
     } else{
       block.push(codewords[i]);
-      if(block.length == 21){
+      if(block.length == DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"].codeWordsPerBlock2){
         codeBlocks[1].push(JSON.parse(JSON.stringify(block)));
         block = [];
       }
@@ -245,6 +311,6 @@ function breakIntoCodeblocks(data){
   return codeBlocks;
 }
 
-// console.log(encodeData("HELLO WORLD"));
+console.log(encodeData("HELLO WORLD", 1, "M"));
 
-export { encodeData, breakIntoCodeblocks };
+export { encodeData, breakIntoCodeblocks, DATA_BY_VERSION_AND_ECLEVEL };
