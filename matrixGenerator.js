@@ -75,7 +75,7 @@ function addTimingPatterns(matrix){
   
   let flipper = true;
   let change;
-  for(let i = 8; i < 61; i++){
+  for(let i = 8; i < matrix.length - 8; i++){
     change = (flipper) ? [1, 1] : [0, 1];
     matrix[6][i] = change;
     matrix[i][6] = change;
@@ -134,13 +134,17 @@ function createMatrix(data, version){
   addFinderPatterns(matrix, [size - 7, 0]);
   addFinderPatterns(matrix, [0, size - 7]);
 
-  addAlignmentPatterns(matrix, [[4, 32], [32, 4], [32, 32], [32, 60], [60, 32], [60, 60]])
+  if(version > 1){
+    // change this to not hardcoded way later
+    addAlignmentPatterns(matrix, [[30, 30]])
+  }
+
 
   addTimingPatterns(matrix);
 
   // For the dark module
 
-  matrix[61][8] = [1, 1];
+  matrix[(4 * version) + 9][8] = [1, 1];
 
   reserveSpaceForFormat(matrix)
 
@@ -158,10 +162,11 @@ function createMatrix(data, version){
     [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]],
     [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
   ];
-
-  reserveSpaceForVersion(matrix, version1, [0, 58]);
-
-  reserveSpaceForVersion(matrix, version2, [58, 0]);
+  if(version >= 7){
+    reserveSpaceForVersion(matrix, version1, [0, 58]);
+  
+    reserveSpaceForVersion(matrix, version2, [58, 0]);
+  }
 
   // printMatrix(matrix);
   fillPattern(matrix, data);
@@ -243,4 +248,5 @@ function printMatrix(matrix){
 
 export {createMatrix, printMatrix}
 
-// createMatrix(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o", 13, "Q"), 13);
+// let matrix = createMatrix(encodeData("HELLO WORLD", 1, "Q"), 1);
+// printMatrix(matrix)

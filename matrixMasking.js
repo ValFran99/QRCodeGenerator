@@ -79,13 +79,27 @@ var VERSION_STRINGS = {
   30: "011110110101110101"
 }
 
+var FORMAT_STRINGS = {
+  1: {
+    "L": "111011111000100",
+    "M": "101010000010010",
+    "Q": "011010101011111",
+    "H": "001011010001001",
+  },
+  6: {
+    "L": "110110001000001",
+    "M": "100111110010111",
+    "Q": "010111011011010" 
+  }
+}
+
 // console.log(createFormatString("Q", 7));
 // console.log(createFormatString("L", 4));
 
 
 // To do so i can at least test if it works
 function fillWithFormatString(matrix, usedMask, ecLevel){
-  let formatString = createFormatString(ecLevel, usedMask);
+  let formatString = FORMAT_STRINGS[usedMask][ecLevel];
   
   var indexStringStart = 0;
   var indexStringMid = 6;
@@ -130,19 +144,19 @@ function fillWithVersionString(matrix, version){
   }
 
   // fills top rigth rectangle
-
 }
-var matrix = createMatrix(encodeData("hello world"), 13);
+
+let matrix = createMatrix(encodeData("HELLO WORLD", 1, "Q"), 1);
+// printMatrix(matrix)
 
 // console.log("seventh mask")
 
-var matrixMask7 = applyMask(matrix, maskFormula7)
-// printMatrix(matrixMask7)
-fillWithFormatString(matrixMask7, 7, "Q");
-fillWithVersionString(matrixMask7, 13);
-printMatrix(matrixMask7)
+var matrixMask = applyMask(matrix, maskFormula0)
+fillWithFormatString(matrixMask, 1, "Q");
+// fillWithVersionString(matrixMask7, 5);
 // console.log("basic matrix")
 
+printMatrix(matrixMask)
 // printMatrix(matrix)
 
 

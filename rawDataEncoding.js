@@ -260,7 +260,7 @@ function encodeData(textToEncode, version, ecMode){
   
   finalMessage += interleaveCW(ecCodeWords);
   
-  console.log(finalMessage)
+  // console.log(finalMessage)
   let totalLength = finalMessage.length + REMAINDER_BITS_PER_VERSION[version]
 
   return finalMessage.padEnd(totalLength, "0");
@@ -273,7 +273,8 @@ function interleaveCW(codeWords){
   let limitBlocksGroup1 = codeWords[0].length;
   let limitBlocksGroup2 = codeWords[1].length;
   let limitCodeWordsGroup1 = codeWords[0][0].length;
-  let limitCodeWordsGroup2 = codeWords[1][0].length;
+  let limitCodeWordsGroup2 = (limitBlocksGroup2 == 0) ? 0 : codeWords[1][0].length;
+  
 
   let group = 0;
   let word = 0;
@@ -392,7 +393,7 @@ function breakIntoCodeblocks(data, version, ecMode){
 const HARDCODED_DATA_FOR_TEST = "0100001101010101010001101000011001010111001001100101010111000010011101110011001000000110000100100000011001100111001001101111011011110110010000100000011101110110100001101111001000000111001001100101011000010110110001101100011110010010000001101011011011100110111101110111011100110010000001110111011010000110010101110010011001010010000001101000011010010111001100100000011101000110111101110111011001010110110000100000011010010111001100101110000011101100000100011110110000010001111011000001000111101100"
 
 
-console.log(encodeData("HELLO WORLD", 5, "Q"));
+// console.log(encodeData("HELLO WORLD", 5, "Q"));
 // console.log("Pls execute this man")
 // let dataCodewords = breakIntoCodeblocks(HARDCODED_DATA_FOR_TEST, 5, "Q")
 // console.log("The data codewords: ")
