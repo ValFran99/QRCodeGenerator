@@ -35,9 +35,24 @@ const GEN_POLY_COEFF_BY_VERSION_AND_ECMODE = {
     "Q": [0, 74, 152, 176, 100, 86, 100, 106, 104, 130, 218, 206, 140, 78],
     "H": [0, 43, 139, 206, 78, 43, 239, 123, 206, 214, 147, 24, 99, 150, 39, 243, 163, 136]
   },
+  5: {
+    "L": [0, 173, 125, 158, 2, 103, 182, 118, 17, 145, 201, 111, 28, 165, 53, 161, 21, 245, 142, 13,
+      102, 48, 227, 153, 145, 218, 70],
+    "M": [0, 229, 121, 135, 48, 211, 117, 251, 126, 159, 180, 169, 152, 192, 226, 228, 218, 111, 0,
+      117, 232, 87, 96, 227, 21],
+    "Q": [0, 215, 234, 158, 94, 184, 97, 118, 170, 79, 187, 152, 148, 252, 179, 5, 98, 96, 153],
+    "H": [0, 210, 171, 247, 242, 93, 230, 14, 109, 221, 53, 200, 74, 8, 172, 98, 80, 219, 134,
+      160, 105, 165, 231]
+  },
   13: {
-    "Q": [0, 229, 121, 135, 48, 211, 117, 251, 126, 159, 180, 169,
-      152, 192, 226, 228, 218, 111, 0, 117, 232, 87, 96, 227, 21]
+    "L": [0, 173, 125, 158, 2, 103, 182, 118, 17, 145, 201, 111, 28, 165, 53, 161, 21, 245, 142, 13,
+      102, 48, 227, 153, 145, 218, 70],
+    "M": [0, 210, 171, 247, 242, 93, 230, 14, 109, 221, 53, 200, 74, 8, 172, 98, 80, 219, 134,
+      160, 105, 165, 231],
+    "Q": [0, 229, 121, 135, 48, 211, 117, 251, 126, 159, 180, 169, 152, 192, 226, 228, 218, 111, 0,
+       117, 232, 87, 96, 227, 21],
+    "H": [0, 210, 171, 247, 242, 93, 230, 14, 109, 221, 53, 200, 74, 8, 172, 98, 80, 219, 134,
+      160, 105, 165, 231]
   }
 }
 
@@ -48,8 +63,17 @@ const EC_CODWORDS_PER_BLOCK = {
     "Q": 13,
     "H": 17
   },
+  5: {
+    "L": 26,
+    "M": 24,
+    "Q": 18,
+    "H": 22
+  },
   13: {
-    "Q": 24
+    "L": 26,
+    "M": 22,
+    "Q": 24,
+    "H": 22
   }
 }
 
@@ -59,16 +83,18 @@ const EC_CODWORDS_PER_BLOCK = {
 function createMessagePolynomial(block, version, ecMode){
   let codeword = "";
   let poly = [];
+  let ogMesPolyLength = 0;
   for(let i = 0; i < block.length; i++){
     codeword = block[i];
     poly.push(parseInt(codeword, 2));
   }
+  ogMesPolyLength = poly.length;
 
   // now we multiply the polynomial by x^n, with n being the no. of ec codewords needed per block
   for (let i = 0; i < EC_CODWORDS_PER_BLOCK[version][ecMode]; i++ ){
     poly.push(0);
   }
-  return poly;
+  return [poly, ogMesPolyLength];
 }
 
 // remember this are the actual numbers
@@ -83,13 +109,16 @@ const HARD_GEN = [
    -1, -1, -1, -1, -1, -1, -1
 ];
 
-
+const HARDCODED_DATA_FOR_TEST = "0100001101010101010001101000011001010111001001100101010111000010011101110011001000000110000100100000011001100111001001101111011011110110010000100000011101110110100001101111001000000111001001100101011000010110110001101100011110010010000001101011011011100110111101110111011100110010000001110111011010000110010101110010011001010010000001101000011010010111001100100000011101000110111101110111011001010110110000100000011010010111001100101110000011101100000100011110110000010001111011000001000111101100"
 
 function polynomialDivision(polMes, polGen, polMesOGLength){
 
+  // console.log("The message polynomial: ")
+  // console.log(polMes)
   // so I dont mutate the original generator by mistake
   let usablePolGen = JSON.parse(JSON.stringify(polGen));
   let ogPolGen = JSON.parse(JSON.stringify(polGen));
+
 
   for(let i = 0; i < polMesOGLength; i++){
     let firstExponent = NUMBER_TO_EXPONENT[polMes[0]];
@@ -105,6 +134,10 @@ function polynomialDivision(polMes, polGen, polMesOGLength){
     usablePolGen = convertToNumbers(usablePolGen, EXPONENT_TO_NUMBER);
     
     // now we have to xor the terms of the message poly with the terms of the generator poly
+    // console.log("The gen poly for the operation: ")
+    // console.log(usablePolGen)
+    // console.log("The message poly for the operation: ")
+    // console.log(polMes)
     for(let k = 0; k < usablePolGen.length; k++){
       if(usablePolGen[k] == -1){
         continue;
@@ -116,11 +149,18 @@ function polynomialDivision(polMes, polGen, polMesOGLength){
     // so both polys have the same length
     ogPolGen.pop()
     usablePolGen = [...ogPolGen]
+    // console.log("The result message poly: ")
+    // console.log(polMes)
+    // console.log("The usable generator: ")
+    // console.log(ogPolGen)
 
   }
 
-
-
+  // console.log("If it mutates or not the polys: ")
+  // console.log(GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[5]["Q"])
+  // console.log("")
+  // console.log("FINISHED THE GROUP")
+  // console.log("")
   return decArrToBinary(polMes);
 }
 
@@ -142,27 +182,34 @@ function createErrorCorrectionCodewords(codeBlocks, version, ecMode){
   let group2ECWords = [];
 
   for (let i = 0; i < group1.length; i++){
-    group1ECWords.push(ecCodewordsByBlock(group1[i], DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"].codewordsPerBlock1, version, ecMode));
+    group1ECWords.push(ecCodewordsByBlock(group1[i], version, ecMode));
   }
 
   for (let i = 0; i < group2.length; i++){
-    group2ECWords.push(ecCodewordsByBlock(group2[i], DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"].codewordsPerBlock2, version, ecMode));
+    group2ECWords.push(ecCodewordsByBlock(group2[i], version, ecMode));
   }
   return [group1ECWords, group2ECWords]
   
 }
 
-function ecCodewordsByBlock(block, amountOfIterations, version, ecMode){
+function ecCodewordsByBlock(block, version, ecMode){
   let mesPoly = [];
   let lenPoly = 0;
-  mesPoly = createMessagePolynomial(block, version, ecMode);
-  console.log(mesPoly)
+  let ogMesPolyLength = 0;
+  let messagePolyArr = [];
+  
+  messagePolyArr = createMessagePolynomial(block, version, ecMode);
+  // console.log("Everything devuelto lol: ")
+  // console.log(messagePolyArr);
+  mesPoly = messagePolyArr[0];
+  ogMesPolyLength = messagePolyArr[1];
+  // console.log(mesPoly)
   lenPoly = mesPoly.length - GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[version][ecMode].length;
   for(let j = 0; j < lenPoly; j++){
     GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[version][ecMode].push(-1);
   }
   // Ahora ya tengo los dos polinomios, puedo empezar a operar
-  return polynomialDivision(mesPoly, GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[version][ecMode], amountOfIterations);
+  return polynomialDivision(mesPoly, GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[version][ecMode], ogMesPolyLength);
 
 }
 

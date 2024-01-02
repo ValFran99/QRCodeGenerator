@@ -53,7 +53,57 @@ const DATA_BY_VERSION_AND_ECLEVEL = {
       }
     }
   },
+  5: {
+    "L": {
+      "totalDataBits": 864,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 108,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 688,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 43,
+        "codeWordsPerBlock2": 0,
+      }
+    },
+    "Q": {
+      "totalDataBits": 496,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 15,
+        "codeWordsPerBlock2": 16
+      }
+    },
+    "H": {
+      "totalDataBits": 368,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 11,
+        "codeWordsPerBlock2": 12
+      }
+    }
+  },
   13: {
+    "L": {
+      "totalDataBits": 3424,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 107,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 2672,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 8,
+        "codewordsPerBlock1": 37,
+        "codeWordsPerBlock2": 38,
+      }
+    },
     "Q": {
       "totalDataBits": 1952,
       "ecWordsAndBlocks": {
@@ -61,10 +111,24 @@ const DATA_BY_VERSION_AND_ECLEVEL = {
         "codewordsPerBlock1": 20,
         "codeWordsPerBlock2": 21
       }
+    },
+    "H": {
+      "totalDataBits": 1440,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 12,
+        "codewordsPerBlock1": 11,
+        "codeWordsPerBlock2": 12
+      }
     }
-  }
+  },
 };
-// for version 1 and error correction q is different
+
+const REMAINDER_BITS_PER_VERSION = {
+  1: 0,
+  5: 7,
+  13: 0
+}
+
 
 const CHAR_COUNT = {
   "1-9": {
@@ -163,7 +227,7 @@ function encodeData(textToEncode, version, ecMode){
 
   let encodedData = enMode + charCount + encodedString;
 
-  console.log("encoded data before any padding: " + encodedData);
+  // console.log("encoded data before any padding: " + encodedData);
 
   let terminator = (DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length < 4) ? DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length : 4;
   encodedData = encodedData.padEnd(encodedData.length + terminator, "0");
@@ -180,56 +244,70 @@ function encodeData(textToEncode, version, ecMode){
     encodedData = encodedData.padEnd(DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"], "1110110000010001");
   }
 
-  console.log("encoded data after padding: " + encodedData);
+  // console.log("encoded data after padding: " + encodedData);
 
   let codeWords = breakIntoCodeblocks(encodedData, version, ecMode);
-  console.log("The codewords: ");
-  console.log(codeWords)
+  // console.log("The codewords: ");
+  // console.log(codeWords)
   let ecCodeWords = createErrorCorrectionCodewords(codeWords, version, ecMode);
+  // console.log("The ec codewords: ");
+  // console.log(ecCodeWords);
 
-  let finalMessage = interleaveCW(codeWords, 1, 7, 4, 21);
+  // let finalMessage = ""
 
-  finalMessage += interleaveCW(ecCodeWords, 1, 7, 4, 24);
+  let finalMessage = interleaveCW(codeWords);
 
-  return finalMessage;
+  
+  finalMessage += interleaveCW(ecCodeWords);
+  
+  console.log(finalMessage)
+  let totalLength = finalMessage.length + REMAINDER_BITS_PER_VERSION[version]
+
+  return finalMessage.padEnd(totalLength, "0");
 }
 
-function interleaveCW(words, limitGroup, limitFstBlock, limitSecBlock, limitCodeWord){
-
-  let group = 0;
-  let block = 0;
-  let codeWord = 0;
+function interleaveCW(codeWords){
 
   let interleavedWords = "";
 
-  while(true){
-    // this thing should depend on the version and ec correction of the choose qr code, but fuck that
-    if(group == limitGroup && block == limitSecBlock && codeWord == limitCodeWord){
+  let limitBlocksGroup1 = codeWords[0].length;
+  let limitBlocksGroup2 = codeWords[1].length;
+  let limitCodeWordsGroup1 = codeWords[0][0].length;
+  let limitCodeWordsGroup2 = codeWords[1][0].length;
+
+  let group = 0;
+  let word = 0;
+
+  while (true){
+    if(word > limitCodeWordsGroup1 && word > limitCodeWordsGroup2){
       break;
     }
-    if(group == limitGroup && block == limitSecBlock){
-      codeWord++;
-      group = 0;
-      block = 0;
-      continue;
+    if(word < limitCodeWordsGroup1){
+      interleavedWords += iterateThroughBlocks(codeWords, word, group, limitBlocksGroup1, limitCodeWordsGroup1);
     }
-
-    let cw = words[group][block][codeWord];
-    if (cw != undefined){
-      interleavedWords += words[group][block][codeWord];
+    group++;
+    if(word < limitCodeWordsGroup2){
+      interleavedWords += iterateThroughBlocks(codeWords, word, group, limitBlocksGroup2, limitCodeWordsGroup2);
     }
-
-    if(block == limitFstBlock){
-      block = 0;
-      group = 1;
-      continue;
-    }
-    block++;
-
+    word++;
+    group = 0;
   }
   return interleavedWords;
+
 }
 
+function iterateThroughBlocks(codeWords, word, group, limitBlocks, limitCodewords) {
+
+  let interleaved = "";
+
+  for (let indexBlock = 0; indexBlock < limitBlocks; indexBlock++) {
+    if (word > limitCodewords) {
+      break;
+    }
+    interleaved += codeWords[group][indexBlock][word];
+  }
+  return interleaved;
+}
 function encodeNumericMode(textToEncode) {
 
   let splittedData = splitString(textToEncode, 3);
@@ -293,7 +371,7 @@ function breakIntoCodeblocks(data, version, ecMode){
   let block = [];
 
   for (let i = 0; i < codewords.length; i++){
-    if(codeBlocks[0].length < DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"]["blocksInGroup1"]){
+    if(codeBlocks[0].length < DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"].blocksInGroup1){
       block.push(codewords[i]);
       if(block.length == DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["ecWordsAndBlocks"].codewordsPerBlock1){
         codeBlocks[0].push(JSON.parse(JSON.stringify(block)));
@@ -311,6 +389,21 @@ function breakIntoCodeblocks(data, version, ecMode){
   return codeBlocks;
 }
 
-console.log(encodeData("HELLO WORLD", 1, "M"));
+const HARDCODED_DATA_FOR_TEST = "0100001101010101010001101000011001010111001001100101010111000010011101110011001000000110000100100000011001100111001001101111011011110110010000100000011101110110100001101111001000000111001001100101011000010110110001101100011110010010000001101011011011100110111101110111011100110010000001110111011010000110010101110010011001010010000001101000011010010111001100100000011101000110111101110111011001010110110000100000011010010111001100101110000011101100000100011110110000010001111011000001000111101100"
+
+
+console.log(encodeData("HELLO WORLD", 5, "Q"));
+// console.log("Pls execute this man")
+// let dataCodewords = breakIntoCodeblocks(HARDCODED_DATA_FOR_TEST, 5, "Q")
+// console.log("The data codewords: ")
+// console.log(dataCodewords)
+// console.log("The ecCodewords: ")
+// let ecCodewords = createErrorCorrectionCodewords(dataCodewords, 5, "Q")
+// console.log(ecCodewords)
+// let exampleInterleaved = "";
+// exampleInterleaved += interleaveCW(dataCodewords)
+// exampleInterleaved += interleaveCW(ecCodewords)
+// console.log("everything interleaved: ")
+// console.log(exampleInterleaved)
 
 export { encodeData, breakIntoCodeblocks, DATA_BY_VERSION_AND_ECLEVEL };

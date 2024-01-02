@@ -243,4 +243,4 @@ function printMatrix(matrix){
 
 export {createMatrix, printMatrix}
 
-// createMatrix(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o"), 13);
+// createMatrix(encodeData("https://www.youtube.com/watch?v=1daMpenuJ7o", 13, "Q"), 13);
