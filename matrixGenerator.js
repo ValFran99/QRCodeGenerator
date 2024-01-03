@@ -136,7 +136,7 @@ function createMatrix(data, version){
 
   if(version > 1){
     // change this to not hardcoded way later
-    addAlignmentPatterns(matrix, [[30, 30]])
+    addAlignmentPatterns(matrix, [[28, 28]])
   }
 
 
@@ -189,7 +189,7 @@ function fillPattern(matrix, dataPattern){
         if(undefined != matrix[i][j]){
           continue;
         }
-        matrix[i][j] = [dataPattern[binaryIndex], "0"]
+        matrix[i][j] = [dataPattern[binaryIndex], 0]
         // printMatrix(matrix);
         binaryIndex++;
         
@@ -213,7 +213,7 @@ function fillPattern(matrix, dataPattern){
         if(undefined != matrix[i][j]){
           continue;
         }
-        matrix[i][j] = [dataPattern[binaryIndex], "0"]
+        matrix[i][j] = [dataPattern[binaryIndex], 0]
         // printMatrix(matrix);
         binaryIndex++;
       }

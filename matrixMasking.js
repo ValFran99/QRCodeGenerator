@@ -25,7 +25,7 @@ function applyMask(matrix, maskFormula){
       }
       if(maskFormula(col, row)){
 
-        matrix[row][col][0] = (matrix[row][col][0] == "0") ? "1" : "0"
+        matrix[row][col][0] = (matrix[row][col][0] == 0) ? 1 : 0
 
       }
     }
@@ -146,7 +146,11 @@ function fillWithVersionString(matrix, version){
   // fills top rigth rectangle
 }
 
-let matrix = createMatrix(encodeData("HELLO WORLD", 1, "Q"), 1);
+function addWhiteSpace(matrix){
+  console.log(matrix)
+}
+
+let matrix = createMatrix(encodeData("https://www.youtube.com/watch?v=YEXYVk6wZJo", 5, "Q"), 5);
 // printMatrix(matrix)
 
 // console.log("seventh mask")
@@ -157,6 +161,7 @@ fillWithFormatString(matrixMask, 1, "Q");
 // console.log("basic matrix")
 
 printMatrix(matrixMask)
+// addWhiteSpace(matrixMask)
 // printMatrix(matrix)
 
 
