@@ -1,21 +1,21 @@
 import { createMatrix, printMatrix } from "./matrixGenerator.js";
 import { encodeData } from "./rawDataEncoding.js";
 
-function maskFormula0(column, row){ return ((row + column) % 2) == 0; }
+function maskFormula1(column, row){ return ((row + column) % 2) == 0; }
 
-function maskFormula1(column, row){ return (row % 2) == 0; }
+function maskFormula2(column, row){ return (row % 2) == 0; }
 
-function maskFormula2(column, row){ return (column % 3) == 0; }
+function maskFormula3(column, row){ return (column % 3) == 0; }
 
-function maskFormula3(column, row){ return ((row + column) % 3) == 0; }
+function maskFormula4(column, row){ return ((row + column) % 3) == 0; }
 
-function maskFormula4(column, row){ return ((Math.floor(row / 2) + Math.floor(column / 3)) % 2) == 0; }
+function maskFormula5(column, row){ return ((Math.floor(row / 2) + Math.floor(column / 3)) % 2) == 0; }
 
-function maskFormula5(column, row){ return (((row * column) % 2) + ((row * column) % 3)) == 0; }
+function maskFormula6(column, row){ return (((row * column) % 2) + ((row * column) % 3)) == 0; }
 
-function maskFormula6(column, row){ return (( ((row * column) % 2) + ((row * column) % 3) ) % 2 ) == 0; }
+function maskFormula7(column, row){ return (( ((row * column) % 2) + ((row * column) % 3) ) % 2 ) == 0; }
 
-function maskFormula7(column, row){ return (( ((row + column) % 2) + ((row * column) % 3) ) % 2) == 0; }
+function maskFormula8(column, row){ return (( ((row + column) % 2) + ((row * column) % 3) ) % 2) == 0; }
 
 function applyMask(matrix, maskFormula){
   for(let row = 0; row < matrix.length; row++){
@@ -84,12 +84,49 @@ var FORMAT_STRINGS = {
     "L": "111011111000100",
     "M": "101010000010010",
     "Q": "011010101011111",
-    "H": "001011010001001",
+    "H": "011010101011111",
+  },
+  2: {
+    "L": "111001011110011",
+    "M": "101000100100101",
+    "Q": "011000001101000",
+    "H": "001001110111110",
+  },
+  3: {
+    "L": "111110110101010",
+    "M": "101111001111100",
+    "Q": "011111100110001",
+    "H": "001110011100111",
+  },
+  4: {
+    "L": "111100010011101",
+    "M": "101101101001011",
+    "Q": "011101000000110",
+    "H": "001100111010000",
+  },
+  5: {
+    "L": "110011000101111",
+    "M": "100010111111001",
+    "Q": "010010010110100",
+    "H": "000011101100010"
   },
   6: {
     "L": "110110001000001",
     "M": "100111110010111",
-    "Q": "010111011011010" 
+    "Q": "010111011011010",
+    "H": "000001001010101"
+  },
+  7: {
+    "L": "110110001000001",
+    "M": "100111110010111",
+    "Q": "010111011011010",
+    "H": "000110100001100"
+  },
+  8: {
+    "L": "110100101110110",
+    "M": "100101010100000",
+    "Q": "010101111101101",
+    "H": "000100000111011"
   }
 }
 
@@ -131,6 +168,9 @@ function fillWithFormatString(matrix, usedMask, ecLevel){
 }
 
 function fillWithVersionString(matrix, version){
+  if(version < 7){
+    return
+  }
   let versionString = VERSION_STRINGS[version];
   let indexString = 0;
 
@@ -146,21 +186,38 @@ function fillWithVersionString(matrix, version){
   // fills top rigth rectangle
 }
 
-function addWhiteSpace(matrix){
-  console.log(matrix)
+function finishMatrix(stringToEncode,maskToApply, appliedMask, version, ecLevel){
+
+  let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
+
+  let maskedMatrix = applyMask(matrix, maskToApply)
+
+
+  fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
+  if(version >= 7){
+    fillWithVersionString(maskedMatrix, version);
+  }
+
+  return maskedMatrix
 }
 
-let matrix = createMatrix(encodeData("https://www.youtube.com/watch?v=YEXYVk6wZJo", 5, "Q"), 5);
+// function addWhiteSpace(matrix){
+//   console.log(matrix)
+// }
+
+// let matrix = createMatrix(encodeData("https://www.youtube.com/watch?v=YEXYVk6wZJo", 5, "Q"), 5);
 // printMatrix(matrix)
 
 // console.log("seventh mask")
 
-var matrixMask = applyMask(matrix, maskFormula0)
-fillWithFormatString(matrixMask, 1, "Q");
-// fillWithVersionString(matrixMask7, 5);
+var testString = "Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans?"
+var testStringYT = "https://www.youtube.com/watch?v=YEXYVk6wZJo"
+
+var masked = finishMatrix(testStringYT, maskFormula3, 3, 5, "Q")
+
 // console.log("basic matrix")
 
-printMatrix(matrixMask)
+printMatrix(masked)
 // addWhiteSpace(matrixMask)
 // printMatrix(matrix)
 

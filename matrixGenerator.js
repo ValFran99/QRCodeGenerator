@@ -1,5 +1,12 @@
 import { encodeData } from "./rawDataEncoding.js";
 
+
+var ALIGNMENT_PATTERN_CENTER_COORDS = {
+  5: [6, 30],
+  13: [6, 34, 62]
+}
+
+
 function calculateSizeByVersion(versionNumber){
   return (((versionNumber - 1) * 4) + 21);
 }
@@ -42,7 +49,39 @@ function addFinderPatterns(matrix, topLeftCoords){
 
 }
 
-function addAlignmentPatterns(matrix, topLeftCoords){
+function generateAllTopLeftPairsBetween(numbers){
+
+  // shift the coords to the top left of the pattern
+  numbers = numbers.map((x) => x - 2);
+
+  if(numbers.length < 2){
+    return numbers;
+  }
+
+  let allPairs = [];
+
+  for(let i = 0; i < numbers.length; i++){
+    for(let j = 0; j < numbers.length; j++){
+      allPairs.push([numbers[i], numbers[j]]);
+    }
+  }
+  return allPairs;
+}
+
+function checkAllCornersOK(matrix, coords){
+
+  let x = coords[0]
+  let y = coords[1]
+
+  return matrix[x][y] == undefined && matrix[x+4][y] == undefined && matrix[x][y+4] == undefined && matrix[x+4][y+4] == undefined
+
+}
+
+function addAlignmentPatterns(matrix, coords){
+
+  let pairs = generateAllTopLeftPairsBetween(coords);
+
+
   let alignmentPattern = [
     [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1]],
     [[1, 1], [0, 1], [0, 1], [0, 1], [1, 1]],
@@ -51,9 +90,16 @@ function addAlignmentPatterns(matrix, topLeftCoords){
     [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1]]
   ]
 
-  for(let i = 0; i < topLeftCoords.length; i++){
-    let startX = topLeftCoords[i][0];
-    let startY = topLeftCoords[i][1];
+  for(let i = 0; i < pairs.length; i++){
+    let startX = pairs[i][0];
+    let startY = pairs[i][1];
+    // console.log("checking pair: ")
+    // console.log([startX, startY])
+    if(!checkAllCornersOK(matrix, [startX, startY])){
+      // console.log("skipped")
+      // console.log([startX, startY])
+      continue;
+    }
 
     let relativeX = 0;
     let relativeY = 0;
@@ -135,8 +181,7 @@ function createMatrix(data, version){
   addFinderPatterns(matrix, [0, size - 7]);
 
   if(version > 1){
-    // change this to not hardcoded way later
-    addAlignmentPatterns(matrix, [[28, 28]])
+    addAlignmentPatterns(matrix, ALIGNMENT_PATTERN_CENTER_COORDS[version])
   }
 
 
@@ -148,7 +193,7 @@ function createMatrix(data, version){
 
   reserveSpaceForFormat(matrix)
 
-  let version1 = [
+  let topRightSpace = [
     [[0, 1], [0, 1], [0, 1]],
     [[0, 1], [0, 1], [0, 1]],
     [[0, 1], [0, 1], [0, 1]],
@@ -157,15 +202,15 @@ function createMatrix(data, version){
     [[0, 1], [0, 1], [0, 1]]
   ];
 
-  let version2 = [
+  let bottomLeftSpace = [
     [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]],
     [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]],
     [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
   ];
   if(version >= 7){
-    reserveSpaceForVersion(matrix, version1, [0, 58]);
+    reserveSpaceForVersion(matrix, topRightSpace, [0, size - 11]);
   
-    reserveSpaceForVersion(matrix, version2, [58, 0]);
+    reserveSpaceForVersion(matrix, bottomLeftSpace, [size - 11, 0]);
   }
 
   // printMatrix(matrix);
