@@ -71,7 +71,6 @@ function createFormatString(ecLevel, maskPattern){
   return (parseInt(finalFormatString, 2) ^ parseInt(lastXorString, 2)).toString(2).padStart(15, "0");
 }
 
-// Usable versions 3, 6, 7, 13, 20, 30
 var VERSION_STRINGS = {
   7: "000111110010010100",
   13: "001101100001000111",
@@ -189,15 +188,16 @@ function fillWithVersionString(matrix, version){
 function finishMatrix(stringToEncode,maskToApply, appliedMask, version, ecLevel){
 
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
-
+  // fillWithFormatString(matrix, appliedMask, ecLevel);
+  // printMatrix(matrix)
   let maskedMatrix = applyMask(matrix, maskToApply)
-
-
   fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
+  
+  
   if(version >= 7){
     fillWithVersionString(maskedMatrix, version);
   }
-
+  
   return maskedMatrix
 }
 
@@ -210,10 +210,10 @@ function finishMatrix(stringToEncode,maskToApply, appliedMask, version, ecLevel)
 
 // console.log("seventh mask")
 
-var testString = "Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans?"
-var testStringYT = "https://www.youtube.com/watch?v=YEXYVk6wZJo"
-
-var masked = finishMatrix(testStringYT, maskFormula3, 3, 5, "Q")
+var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokémon breeding"
+var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
+var testStringV1 = "algo dudosos"
+var masked = finishMatrix(testStringV13, maskFormula1, 1, 7, "Q")
 
 // console.log("basic matrix")
 

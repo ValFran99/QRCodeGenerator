@@ -87,6 +87,40 @@ const DATA_BY_VERSION_AND_ECLEVEL = {
       }
     }
   },
+  7: {
+    "L": {
+      "totalDataBits": 1248,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 78,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 992,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 31,
+        "codeWordsPerBlock2": 0,
+      }
+    },
+    "Q": {
+      "totalDataBits": 704,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 14,
+        "codeWordsPerBlock2": 15
+      }
+    },
+    "H": {
+      "totalDataBits": 528,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 13,
+        "codeWordsPerBlock2": 14
+      }
+    }
+  },
   13: {
     "L": {
       "totalDataBits": 3424,
@@ -126,6 +160,7 @@ const DATA_BY_VERSION_AND_ECLEVEL = {
 const REMAINDER_BITS_PER_VERSION = {
   1: 0,
   5: 7,
+  7: 0,
   13: 0
 }
 
@@ -209,6 +244,8 @@ function encodeData(textToEncode, version, ecMode){
   if (enMode == "0010"){
     // alphanumeric
     encodedString = encodeAlphanumericMode(textToEncode);
+    // console.log("The encoded string: ")
+    // console.log(encodedString)
   }
 
   if (enMode == "0100"){
@@ -255,6 +292,7 @@ function encodeData(textToEncode, version, ecMode){
 
   // let finalMessage = ""
 
+
   let finalMessage = interleaveCW(codeWords);
 
   
@@ -262,6 +300,7 @@ function encodeData(textToEncode, version, ecMode){
   
   // console.log(finalMessage)
   let totalLength = finalMessage.length + REMAINDER_BITS_PER_VERSION[version]
+  // console.log(totalLength)
 
   return finalMessage.padEnd(totalLength, "0");
 }
@@ -309,6 +348,7 @@ function iterateThroughBlocks(codeWords, word, group, limitBlocks, limitCodeword
   }
   return interleaved;
 }
+
 function encodeNumericMode(textToEncode) {
 
   let splittedData = splitString(textToEncode, 3);
@@ -338,7 +378,8 @@ function encodeNumericMode(textToEncode) {
 function encodeAlphanumericMode(textToEncode) {
 
   let splittedString = splitString(textToEncode, 2);
-
+  // console.log("The splitted string in twos: ")
+  // console.log(splittedString)
   let charA = "";
   let charB = "";
   let twoChars = "";
@@ -348,20 +389,25 @@ function encodeAlphanumericMode(textToEncode) {
 
   for (let i = 0; i < splittedString.length; i++) {
     twoChars = splittedString[i];
-
-
+    
+    
     charA = twoChars[0];
-    charB = twoChars[1];
     charAcode = charA in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charA] : parseInt(charA, 36);
-    charBcode = charB in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charB] : parseInt(charB, 36);
+    
     if (twoChars.length == 1) {
       alphaEncoded += charAcode.toString(2).padStart(6, "0");
       continue;
     }
-
+    
+    charB = twoChars[1];
+    charBcode = charB in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charB] : parseInt(charB, 36);
     var medSult = (45 * charAcode) + charBcode;
+    // console.log("The encoded result in int: ")
+    // console.log(medSult)
     alphaEncoded += medSult.toString(2).padStart(11, "0");
   }
+
+
   return alphaEncoded;
 }
 

@@ -3,6 +3,7 @@ import { encodeData } from "./rawDataEncoding.js";
 
 var ALIGNMENT_PATTERN_CENTER_COORDS = {
   5: [6, 30],
+  7: [6, 22, 38],
   13: [6, 34, 62]
 }
 
@@ -221,16 +222,19 @@ function createMatrix(data, version){
 }
 
 function fillPattern(matrix, dataPattern){
-
+  // console.log("This is the data pattern: ")
+  // console.log(dataPattern)
   let size = matrix.length;
   let binaryIndex = 0;
-  let i = 14;
-  let j = 61;
+  let i;
+  let j;
   let lastJ = size - 1;
   while(binaryIndex < dataPattern.length){
     // console.log("j is in the upwards: " + j);
     for(i = size - 1; i >= 0; i--){
       for(j = lastJ; j > lastJ - 2; j--){
+        // console.log("I need to write a: ")
+        // console.log(dataPattern[binaryIndex])
         if(undefined != matrix[i][j]){
           continue;
         }
@@ -250,11 +254,13 @@ function fillPattern(matrix, dataPattern){
     // console.log("j is in the downwards: " + j);
     if(j == 6){
       lastJ = 5;
-      continue;
+      
     }
 
     for(i = 0; i < size; i++){
       for(j = lastJ; j > lastJ - 2; j--){
+        // console.log("I need to write a: ")
+        // console.log(dataPattern[binaryIndex])
         if(undefined != matrix[i][j]){
           continue;
         }
@@ -266,10 +272,9 @@ function fillPattern(matrix, dataPattern){
     // To skip the vertical alignment pattern thats always on the coord 6, 6
     if(j == 6){
       lastJ = 5;
-      continue;
+      
     }
     lastJ = j;
-
   }
 
 }
