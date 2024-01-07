@@ -188,17 +188,18 @@ function fillWithVersionString(matrix, version){
 function finishMatrix(stringToEncode,maskToApply, appliedMask, version, ecLevel){
 
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
-  // fillWithFormatString(matrix, appliedMask, ecLevel);
-  // printMatrix(matrix)
-  let maskedMatrix = applyMask(matrix, maskToApply)
-  fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
+  fillWithFormatString(matrix, appliedMask, ecLevel);
+  // let maskedMatrix = applyMask(matrix, maskToApply)
+  // fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
   
   
   if(version >= 7){
-    fillWithVersionString(maskedMatrix, version);
+    // fillWithVersionString(maskedMatrix, version);
+    fillWithVersionString(matrix, version);
   }
-  
-  return maskedMatrix
+  printMatrix(matrix)
+  return ""
+  // return maskedMatrix
 }
 
 // function addWhiteSpace(matrix){
@@ -210,7 +211,7 @@ function finishMatrix(stringToEncode,maskToApply, appliedMask, version, ecLevel)
 
 // console.log("seventh mask")
 
-var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokémon breeding"
+var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
 var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
 var testStringV1 = "algo dudosos"
 var masked = finishMatrix(testStringV13, maskFormula1, 1, 7, "Q")

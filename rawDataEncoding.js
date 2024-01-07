@@ -232,8 +232,11 @@ function encodeData(textToEncode, version, ecMode){
   } else{
     versionRange = "27-40";
   }
+  // console.log("text to encode: " + textToEncode)
+  // console.log("Its length: " + textToEncode.length)
   let enMode = getEncodingMode(textToEncode);
   let charCount = getCharCount(textToEncode.length, enMode, versionRange);
+  // console.log("And this is the charCount, should be 8 bit and 78: " + charCount)
   let encodedString = "";
 
   if (enMode == "0001"){
@@ -263,6 +266,7 @@ function encodeData(textToEncode, version, ecMode){
   // adding terminator
 
   let encodedData = enMode + charCount + encodedString;
+  // console.log("Partial encoded data: " + encodedData)
 
   // console.log("encoded data before any padding: " + encodedData);
 
@@ -298,6 +302,7 @@ function encodeData(textToEncode, version, ecMode){
   
   finalMessage += interleaveCW(ecCodeWords);
   
+  // console.log("The final message")
   // console.log(finalMessage)
   let totalLength = finalMessage.length + REMAINDER_BITS_PER_VERSION[version]
   // console.log(totalLength)

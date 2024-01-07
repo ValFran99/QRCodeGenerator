@@ -153,9 +153,9 @@ function polynomialDivision(polMes, polGen, polMesOGLength){
 
   // console.log("If it mutates or not the polys: ")
   // console.log(GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[5]["Q"])
-  // console.log("")
-  // console.log("FINISHED THE GROUP")
-  // console.log("")
+  // console.log("####################################################")
+  // console.log("#                FINISHED THE GROUP                #")
+  // console.log("####################################################")
   return decArrToBinary(polMes);
 }
 
