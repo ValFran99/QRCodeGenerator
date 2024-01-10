@@ -108,14 +108,17 @@ const HARDCODED_DATA_FOR_TEST = "01000011010101010100011010000110010101110010011
 
 function polynomialDivision(polMes, polGen, polMesOGLength){
 
-  // console.log("The message polynomial: ")
-  // console.log(polMes)
+  console.log("The message polynomial: ")
+  console.log(polMes)
   // so I dont mutate the original generator by mistake
   let usablePolGen = JSON.parse(JSON.stringify(polGen));
   let ogPolGen = JSON.parse(JSON.stringify(polGen));
 
 
   for(let i = 0; i < polMesOGLength; i++){
+    console.log("#####################################")
+    console.log("            DIVISION NUMBER: " + i);
+    console.log("#####################################")
     let firstExponent = NUMBER_TO_EXPONENT[polMes[0]];
     // multiply the generator poly with the first term of the message poly
     for(let j = 0; j < usablePolGen.length; j++){
@@ -129,10 +132,10 @@ function polynomialDivision(polMes, polGen, polMesOGLength){
     usablePolGen = convertToNumbers(usablePolGen, EXPONENT_TO_NUMBER);
     
     // now we have to xor the terms of the message poly with the terms of the generator poly
-    // console.log("The gen poly for the operation: ")
-    // console.log(usablePolGen)
-    // console.log("The message poly for the operation: ")
-    // console.log(polMes)
+    console.log("The gen poly for the operation: ")
+    console.log(usablePolGen)
+    console.log("The message poly for the operation: ")
+    console.log(polMes)
     for(let k = 0; k < usablePolGen.length; k++){
       if(usablePolGen[k] == -1){
         continue;
@@ -144,18 +147,18 @@ function polynomialDivision(polMes, polGen, polMesOGLength){
     // so both polys have the same length
     ogPolGen.pop()
     usablePolGen = [...ogPolGen]
-    // console.log("The result message poly: ")
-    // console.log(polMes)
-    // console.log("The usable generator: ")
-    // console.log(ogPolGen)
+    console.log("The result message poly: ")
+    console.log(polMes)
+    console.log("The usable generator: ")
+    console.log(ogPolGen)
 
   }
 
   // console.log("If it mutates or not the polys: ")
   // console.log(GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[5]["Q"])
-  // console.log("####################################################")
-  // console.log("#                FINISHED THE GROUP                #")
-  // console.log("####################################################")
+  console.log("####################################################")
+  console.log("#                FINISHED THE GROUP                #")
+  console.log("####################################################")
   return decArrToBinary(polMes);
 }
 

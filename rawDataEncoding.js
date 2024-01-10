@@ -266,9 +266,9 @@ function encodeData(textToEncode, version, ecMode){
   // adding terminator
 
   let encodedData = enMode + charCount + encodedString;
-  // console.log("Partial encoded data: " + encodedData)
+  console.log("Partial encoded data: " + encodedData)
 
-  // console.log("encoded data before any padding: " + encodedData);
+  console.log("encoded data before any padding: " + encodedData);
 
   let terminator = (DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length < 4) ? DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length : 4;
   encodedData = encodedData.padEnd(encodedData.length + terminator, "0");
@@ -285,14 +285,14 @@ function encodeData(textToEncode, version, ecMode){
     encodedData = encodedData.padEnd(DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"], "1110110000010001");
   }
 
-  // console.log("encoded data after padding: " + encodedData);
+  console.log("encoded data after padding: " + encodedData);
 
   let codeWords = breakIntoCodeblocks(encodedData, version, ecMode);
-  // console.log("The codewords: ");
-  // console.log(codeWords)
+  console.log("The codewords: ");
+  console.log(codeWords)
   let ecCodeWords = createErrorCorrectionCodewords(codeWords, version, ecMode);
-  // console.log("The ec codewords: ");
-  // console.log(ecCodeWords);
+  console.log("The ec codewords: ");
+  console.log(ecCodeWords);
 
   // let finalMessage = ""
 
@@ -302,10 +302,10 @@ function encodeData(textToEncode, version, ecMode){
   
   finalMessage += interleaveCW(ecCodeWords);
   
-  // console.log("The final message")
-  // console.log(finalMessage)
+  console.log("The final message")
+  console.log(finalMessage)
   let totalLength = finalMessage.length + REMAINDER_BITS_PER_VERSION[version]
-  // console.log(totalLength)
+  console.log(totalLength)
 
   return finalMessage.padEnd(totalLength, "0");
 }

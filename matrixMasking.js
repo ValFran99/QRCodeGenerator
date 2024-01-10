@@ -78,12 +78,12 @@ var VERSION_STRINGS = {
   30: "011110110101110101"
 }
 
-var FORMAT_STRINGS = {
+const FORMAT_STRINGS = {
   1: {
     "L": "111011111000100",
     "M": "101010000010010",
     "Q": "011010101011111",
-    "H": "011010101011111",
+    "H": "001011010001001",
   },
   2: {
     "L": "111001011110011",
@@ -110,9 +110,9 @@ var FORMAT_STRINGS = {
     "H": "000011101100010"
   },
   6: {
-    "L": "110110001000001",
-    "M": "100111110010111",
-    "Q": "010111011011010",
+    "L": "110001100011000",
+    "M": "100000011001110",
+    "Q": "010000110000011",
     "H": "000001001010101"
   },
   7: {
@@ -185,21 +185,21 @@ function fillWithVersionString(matrix, version){
   // fills top rigth rectangle
 }
 
-function finishMatrix(stringToEncode,maskToApply, appliedMask, version, ecLevel){
+function finishMatrix(stringToEncode, maskToApply, appliedMask, version, ecLevel){
 
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
-  fillWithFormatString(matrix, appliedMask, ecLevel);
-  // let maskedMatrix = applyMask(matrix, maskToApply)
-  // fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
+  // fillWithFormatString(matrix, appliedMask, ecLevel);
+  let maskedMatrix = applyMask(matrix, maskToApply)
+  fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
   
   
   if(version >= 7){
-    // fillWithVersionString(maskedMatrix, version);
-    fillWithVersionString(matrix, version);
+    fillWithVersionString(maskedMatrix, version);
+    // fillWithVersionString(matrix, version);
   }
-  printMatrix(matrix)
-  return ""
-  // return maskedMatrix
+  // printMatrix(matrix)
+  // return ""
+  return maskedMatrix
 }
 
 // function addWhiteSpace(matrix){
@@ -213,8 +213,8 @@ function finishMatrix(stringToEncode,maskToApply, appliedMask, version, ecLevel)
 
 var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
 var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
-var testStringV1 = "algo dudosos"
-var masked = finishMatrix(testStringV13, maskFormula1, 1, 7, "Q")
+var testStringV1 = "HELLO WORLD"
+var masked = finishMatrix(testStringV1, maskFormula8, 8, 1, "L")
 
 // console.log("basic matrix")
 
