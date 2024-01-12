@@ -188,6 +188,7 @@ function fillWithVersionString(matrix, version){
 function finishMatrix(stringToEncode, maskToApply, appliedMask, version, ecLevel){
 
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
+  // printMatrix(matrix)
   // fillWithFormatString(matrix, appliedMask, ecLevel);
   let maskedMatrix = applyMask(matrix, maskToApply)
   fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
@@ -213,7 +214,7 @@ function finishMatrix(stringToEncode, maskToApply, appliedMask, version, ecLevel
 
 var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
 var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
-var testStringV1 = "HELLO WORLD"
+var testStringV1 = "hello world"
 var masked = finishMatrix(testStringV1, maskFormula8, 8, 1, "L")
 
 // console.log("basic matrix")
