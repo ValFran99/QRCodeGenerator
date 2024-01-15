@@ -171,14 +171,14 @@ function fillWithVersionString(matrix, version){
     return
   }
   let versionString = VERSION_STRINGS[version];
-  let indexString = 0;
+  let indexString = versionString.length - 1;
 
   // fills bottom left rectangle
   for(let indexCol = 0; indexCol < 6; indexCol++){
     for(let indexRow = matrix.length - 11; indexRow < matrix.length - 8; indexRow++){
       matrix[indexRow][indexCol] = versionString[indexString];
       matrix[indexCol][indexRow] = versionString[indexString];
-      indexString++;
+      indexString--;
     }
   }
 
@@ -217,7 +217,7 @@ var testStringV13 = "Hey guys, did you know that in terms of male human and fema
 var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
 // var testStringV1 = "hello world"
 var testStringV1 = "THIS THING IN ALPHANUMERIC SHOULD WORK CORRECTLY BC REASONS"
-var masked = finishMatrix(testStringV13, maskFormula5, 5, 7, "L")
+var masked = finishMatrix(testStringV13, maskFormula5, 5, 13, "M")
 
 // console.log("basic matrix")
 
