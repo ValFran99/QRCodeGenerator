@@ -185,12 +185,192 @@ function fillWithVersionString(matrix, version){
   // fills top rigth rectangle
 }
 
+function applyEveryMask(matrix){
+
+  const arrayOfFormulas = [maskFormula1, maskFormula2, maskFormula3, maskFormula4, maskFormula5, maskFormula6, maskFormula7, maskFormula8];
+  const everyMask = [];
+
+  for(let i = 0; i < arrayOfFormulas.length; i++){
+    everyMask.push(applyMask(JSON.parse(JSON.stringify(matrix)), arrayOfFormulas[i]));
+  }
+
+  return everyMask
+}
+
+function checkRow(stackRow, accRow, matrixValue){
+  if(stackRow.length == 0){
+    stackRow.push(matrixValue);
+    return;
+  }
+
+  if(stackRow[stackRow.length - 1] == matrixValue){
+    stackRow.push(matrixValue);
+  }
+  else{
+    stackRow.length = 0;
+    stackRow.push(matrixValue)
+  }
+
+  if(stackRow.length == 5){
+    accRow[0] += 3;
+  }
+  if(stackRow.length > 5){
+    accRow[0] += 1;
+  }
+}
+
+function checkCol(stackCol, accCol, matrixValue){
+  if(stackCol.length == 0){
+    stackCol.push(matrixValue);
+    return;
+  }
+
+  if(stackCol[stackCol.length - 1] == matrixValue){
+    stackCol.push(matrixValue);
+  }
+  else{
+    stackCol.length = 0;
+    stackCol.push(matrixValue)
+  }
+
+  if(stackCol.length == 5){
+    accCol[0] += 3;
+  }
+  if(stackCol.length > 5){
+    accCol[0] += 1;
+  }
+}
+
+function calculateAllPenaltyRules(maskedMatrix){
+
+  let penaltyAcc = 0;
+  let stackCol = [];
+  let stackRow = [];
+  // this is so ugly, i cant believe i miss pointers lol
+  let accCol = [0];
+  let accRow = [0];
+  let matrixSize = maskedMatrix.length;
+
+  // first rule and also calculate # of black modules for the 4th rule
+  // Its pretty ugly bc im trying to do everything in one pass
+  let amountOfBlackModules = 0;
+
+  for(let row = 0; row < maskedMatrix.length; row++){
+    for(let col = 0; col < maskedMatrix.length; col++){
+      if(maskedMatrix[row][col][0] == 1){
+        amountOfBlackModules++;
+      }
+      checkCol(stackCol, accCol, maskedMatrix[col][row][0]);
+      checkRow(stackRow, accRow, maskedMatrix[row][col][0]);
+    }
+  }
+  penaltyAcc = accCol[0] + accRow[0];
+
+
+  let topLeftValue;
+  // second rule
+  for(let row = 0; row < maskedMatrix.length; row++){
+    for(let col = 0; col < maskedMatrix.length; col++){
+      if(col + 1 >= matrixSize || row + 1 >= matrixSize){
+        continue;
+      }
+      topLeftValue = maskedMatrix[row][col][0];
+      if((topLeftValue == maskedMatrix[row+1][col][0]) && (topLeftValue == maskedMatrix[row][col+1][0]) && (topLeftValue == maskedMatrix[row+1][col+1][0])){
+        penaltyAcc += 3;
+      }
+    }
+
+  }
+  
+  // third rule
+  // Its pretty ugly bc im trying to do everything in one pass
+  let pattern1 = "10111010000";
+  let pattern2 = "00001011101";
+  let flagPtrn1Row = true;
+  let flagPtrn2Row = true;
+  let flagPtrn1Col = true;
+  let flagPtrn2Col = true;
+
+  for(let row = 0; row < (maskedMatrix.length - 11); row++){
+    for(let col = 0; col < (maskedMatrix.length - 11); col++){
+      for(let patternIndex = 0; patternIndex < 11; patternIndex++){
+        if(flagPtrn1Row){
+          flagPtrn1Row = maskedMatrix[row][col + patternIndex][0] == pattern1[patternIndex];
+        }
+
+        if(flagPtrn2Row){
+          flagPtrn2Row = maskedMatrix[row][col + patternIndex][0] == pattern2[patternIndex];
+        }
+
+        if(flagPtrn1Col){
+          flagPtrn1Col = maskedMatrix[row + patternIndex][col][0] == pattern1[patternIndex];
+        }
+
+        if(flagPtrn2Col){
+          flagPtrn2Col = maskedMatrix[row + patternIndex][col][0] == pattern2[patternIndex];
+        }
+
+        if(!flagPtrn1Row && !flagPtrn2Row && !flagPtrn1Col && !flagPtrn2Col){
+          break;
+        }
+      }
+      if(flagPtrn1Row){
+        penaltyAcc += 40;
+      }
+      if(flagPtrn2Row){
+        penaltyAcc += 40;
+      }
+      if(flagPtrn1Col){
+        penaltyAcc += 40;
+      }
+      if(flagPtrn2Col){
+        penaltyAcc += 40;
+      }
+      flagPtrn1Row = flagPtrn2Row = flagPtrn1Col = flagPtrn2Col = true;
+    }
+  }
+
+
+  // fourth rule
+
+  return penaltyAcc;
+
+}
+
+function calculatePenaltyToEveryMask(matrix){
+  
+  let everyMask = applyEveryMask(matrix);
+  let everyPenalty = [];
+
+  for(let maskIndex = 0; maskIndex < everyMask.length; maskIndex++){
+    console.log("Calculating penalty for this mask: ")
+    printMatrix(everyMask[maskIndex]);
+    everyPenalty.push(calculateAllPenaltyRules(everyMask[maskIndex]))
+  }
+  console.log(everyPenalty)
+  return everyPenalty
+}
+
+// this should go to another file really
 function finishMatrix(stringToEncode, maskToApply, appliedMask, version, ecLevel){
 
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
   // printMatrix(matrix)
   // fillWithFormatString(matrix, appliedMask, ecLevel);
-  let maskedMatrix = applyMask(matrix, maskToApply)
+  calculatePenaltyToEveryMask(matrix)
+  applyEveryMask(matrix)
+
+
+
+  let maskedMatrix = applyMask(JSON.parse(JSON.stringify(matrix)), maskToApply)
+
+  // console.log("Mask 5")
+  // console.log(maskedMatrix)
+  // console.log("The normal matrix")
+  // console.log(matrix)
+
+
+
   fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
   
   
@@ -215,9 +395,9 @@ function finishMatrix(stringToEncode, maskToApply, appliedMask, version, ecLevel
 var sevenLTest = "Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans?"
 var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
 var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
-// var testStringV1 = "hello world"
-var testStringV1 = "THIS THING IN ALPHANUMERIC SHOULD WORK CORRECTLY BC REASONS"
-var masked = finishMatrix(testStringV13, maskFormula5, 5, 13, "M")
+var testStringV1 = "hello world"
+// var testStringV1 = "THIS THING IN ALPHANUMERIC SHOULD WORK CORRECTLY BC REASONS"
+var masked = finishMatrix(testStringV1, maskFormula5, 5, 1, "L")
 
 // console.log("basic matrix")
 
