@@ -212,10 +212,12 @@ function finishMatrix(stringToEncode, maskToApply, appliedMask, version, ecLevel
 
 // console.log("seventh mask")
 
+var sevenLTest = "Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans?"
 var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
 var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
-var testStringV1 = "hello world"
-var masked = finishMatrix(testStringV1, maskFormula8, 8, 1, "L")
+// var testStringV1 = "hello world"
+var testStringV1 = "THIS THING IN ALPHANUMERIC SHOULD WORK CORRECTLY BC REASONS"
+var masked = finishMatrix(testStringV13, maskFormula5, 5, 7, "L")
 
 // console.log("basic matrix")
 

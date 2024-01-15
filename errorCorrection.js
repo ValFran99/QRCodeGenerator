@@ -116,28 +116,30 @@ function polynomialDivision(msg, n_ec_words) {
   // let gen_poly = [117,68,11,164,154,122,127,1]
   // console.log("would use")
   // console.log(GEN_POLY_COEFF_BY_EC_CODEWORDS[n_ec_words])
-  let gen_poly = exponentArrToNumber(GEN_POLY_COEFF_BY_EC_CODEWORDS[n_ec_words]).reverse()
-  // for(let i = 0; i < (4*7 - this.gen_poly.length); i++){
-  //   this.gen_poly.push(0)
-  // }
-
+  let gen_poly = exponentArrToNumber(JSON.parse(JSON.stringify(GEN_POLY_COEFF_BY_EC_CODEWORDS[n_ec_words]))).reverse()
+  let fullGenPolyLength = ((4*gen_poly.length) - gen_poly.length)
+  
   // console.log("The used genPoly")
   // console.log(gen_poly)
   var LFSR = new Array(gen_poly.length);
   var i;
-  for(i = 0; i < gen_poly.length; i++) { LFSR[i] = 0; }
+
+  for(let i = 0; i < fullGenPolyLength; i++){
+    gen_poly.push(0)
+  }
+  for(i = 0; i < LFSR.length; i++) { LFSR[i] = 0; }
 
   for (i = 0; i < msg.length; i++) {
-    var dbyte = msg[i] ^ LFSR[gen_poly.length - 2];
+    var dbyte = msg[i] ^ LFSR[LFSR.length - 2];
     var j;
-    for (j = gen_poly.length - 2; j > 0; j--) {
+    for (j = LFSR.length - 2; j > 0; j--) {
       LFSR[j] = LFSR[j-1] ^ gmult(gen_poly[j], dbyte);
     }
     LFSR[0] = gmult(gen_poly[0], dbyte);
   }
 
   var parity = [];
-  for (i = gen_poly.length - 2; i >= 0; i--) { parity.push(LFSR[i]); }
+  for (i = LFSR.length - 2; i >= 0; i--) { parity.push(LFSR[i]); }
   // console.log("The ec codewords")
   // console.log(parity)
   return decArrToBinary(parity);
