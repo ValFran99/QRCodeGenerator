@@ -17,6 +17,8 @@ function maskFormula7(column, row){ return (( ((row * column) % 2) + ((row * col
 
 function maskFormula8(column, row){ return (( ((row + column) % 2) + ((row * column) % 3) ) % 2) == 0; }
 
+const ARRAY_OF_FORMULAS = [maskFormula1, maskFormula2, maskFormula3, maskFormula4, maskFormula5, maskFormula6, maskFormula7, maskFormula8];
+
 function applyMask(matrix, maskFormula){
   for(let row = 0; row < matrix.length; row++){
     for(let col = 0; col < matrix.length; col++){
@@ -31,44 +33,6 @@ function applyMask(matrix, maskFormula){
     }
   }
   return matrix;
-}
-
-
-function createFormatString(ecLevel, maskPattern){
-  let ecLevelToBin = {
-    "L": "01",
-    "M": "00",
-    "Q": "11",
-    "H": "10"
-  };
-
-  let binaryMaskPattern = maskPattern.toString(2).padStart(3);
-  let formatString = ecLevelToBin[ecLevel] + binaryMaskPattern;
-  let ecFormatString = formatString;
-  let generatorFormatString = "10100110111";
-  // now we divide the format string by the generator n times
-  
-  // we add zeroes to the right to form a 15 bit string
-  let regex = /(^0+)/g;
-  ecFormatString = ecFormatString.padEnd(15, "0");
-  // and remove the leading zeroes if necessary
-  ecFormatString = ecFormatString.replace(regex, "");
-  
-  let tempGeneratorFormatString = "";
-  
-  while(ecFormatString.length > 11){
-    tempGeneratorFormatString = generatorFormatString.padEnd(ecFormatString.length, "0");
-
-    ecFormatString =  (parseInt(tempGeneratorFormatString, 2) ^ parseInt(ecFormatString, 2)).toString(2);
-
-  }
-
-  ecFormatString = (parseInt(generatorFormatString, 2) ^ parseInt(ecFormatString, 2)).toString(2);
-
-  let finalFormatString = formatString + ecFormatString.padEnd(10);
-  let lastXorString = "101010000010010";
-
-  return (parseInt(finalFormatString, 2) ^ parseInt(lastXorString, 2)).toString(2).padStart(15, "0");
 }
 
 var VERSION_STRINGS = {
@@ -129,11 +93,6 @@ const FORMAT_STRINGS = {
   }
 }
 
-// console.log(createFormatString("Q", 7));
-// console.log(createFormatString("L", 4));
-
-
-// To do so i can at least test if it works
 function fillWithFormatString(matrix, usedMask, ecLevel){
   let formatString = FORMAT_STRINGS[usedMask][ecLevel];
   
@@ -181,17 +140,14 @@ function fillWithVersionString(matrix, version){
       indexString--;
     }
   }
-
-  // fills top rigth rectangle
 }
 
 function applyEveryMask(matrix){
 
-  const arrayOfFormulas = [maskFormula1, maskFormula2, maskFormula3, maskFormula4, maskFormula5, maskFormula6, maskFormula7, maskFormula8];
   const everyMask = [];
 
-  for(let i = 0; i < arrayOfFormulas.length; i++){
-    everyMask.push(applyMask(JSON.parse(JSON.stringify(matrix)), arrayOfFormulas[i]));
+  for(let i = 0; i < ARRAY_OF_FORMULAS.length; i++){
+    everyMask.push(applyMask(JSON.parse(JSON.stringify(matrix)), ARRAY_OF_FORMULAS[i]));
   }
 
   return everyMask
@@ -332,6 +288,34 @@ function calculateAllPenaltyRules(maskedMatrix){
 
 
   // fourth rule
+  let allModules = maskedMatrix.length * maskedMatrix.length;
+  let blackPercentage = Math.floor((amountOfBlackModules / allModules) * 100);
+  let previousMultiple = blackPercentage;
+  let nextMultiple = blackPercentage; 
+
+
+  // I need to get the next and previous multiple of 5 of the percentage
+  if(blackPercentage % 5 == 0){
+    nextMultiple = blackPercentage + 5;
+  } else{
+    while(previousMultiple % 5 != 0){
+      previousMultiple--;
+    }
+    while(nextMultiple % 5 != 0){
+      nextMultiple++;
+    }
+  }
+
+  let absPrevious = Math.abs(previousMultiple - 50);
+  let absNext = Math.abs(nextMultiple - 50);
+
+  absPrevious = absPrevious / 5;
+  absNext = absNext / 5;
+  if(absPrevious < absNext){
+    penaltyAcc += (absPrevious * 10);
+  } else{
+    penaltyAcc += (absNext * 10);
+  }
 
   return penaltyAcc;
 
@@ -343,108 +327,37 @@ function calculatePenaltyToEveryMask(matrix){
   let everyPenalty = [];
 
   for(let maskIndex = 0; maskIndex < everyMask.length; maskIndex++){
-    console.log("Calculating penalty for this mask: ")
-    printMatrix(everyMask[maskIndex]);
     everyPenalty.push(calculateAllPenaltyRules(everyMask[maskIndex]))
   }
-  console.log(everyPenalty)
+
   return everyPenalty
 }
 
 // this should go to another file really
-function finishMatrix(stringToEncode, maskToApply, appliedMask, version, ecLevel){
+function finishMatrix(stringToEncode, version, ecLevel){
 
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
-  // printMatrix(matrix)
-  // fillWithFormatString(matrix, appliedMask, ecLevel);
-  calculatePenaltyToEveryMask(matrix)
-  applyEveryMask(matrix)
+  let everyPenalty = calculatePenaltyToEveryMask(matrix);
+  let minPenalty = Math.min(...everyPenalty);
+  let indexOfMin = everyPenalty.indexOf(minPenalty);
+  let appliedMask = indexOfMin + 1;
 
-
-
-  let maskedMatrix = applyMask(JSON.parse(JSON.stringify(matrix)), maskToApply)
-
-  // console.log("Mask 5")
-  // console.log(maskedMatrix)
-  // console.log("The normal matrix")
-  // console.log(matrix)
-
-
-
+  let maskedMatrix = applyMask(matrix, ARRAY_OF_FORMULAS[indexOfMin]);
   fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
   
   
   if(version >= 7){
     fillWithVersionString(maskedMatrix, version);
-    // fillWithVersionString(matrix, version);
   }
-  // printMatrix(matrix)
-  // return ""
+
   return maskedMatrix
 }
-
-// function addWhiteSpace(matrix){
-//   console.log(matrix)
-// }
-
-// let matrix = createMatrix(encodeData("https://www.youtube.com/watch?v=YEXYVk6wZJo", 5, "Q"), 5);
-// printMatrix(matrix)
-
-// console.log("seventh mask")
 
 var sevenLTest = "Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans?"
 var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
 var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
 var testStringV1 = "hello world"
-// var testStringV1 = "THIS THING IN ALPHANUMERIC SHOULD WORK CORRECTLY BC REASONS"
-var masked = finishMatrix(testStringV1, maskFormula5, 5, 1, "L")
 
-// console.log("basic matrix")
+var masked = finishMatrix(testStringV1, 1, "L")
 
 printMatrix(masked)
-// addWhiteSpace(matrixMask)
-// printMatrix(matrix)
-
-
-
-// var matrixCopy = JSON.parse(JSON.stringify(matrix))
-
-// console.log("first mask")
-
-// var mask0 = applyMask(matrixCopy, maskFormula0)
-// printMatrix(mask0)
-
-// console.log("second mask")
-
-// var mask1 = applyMask(matrixCopy, maskFormula1)
-// printMatrix(mask1)
-
-// console.log("third mask")
-
-// var mask2 = applyMask(matrixCopy, maskFormula2)
-// printMatrix(mask2)
-
-// console.log("fourth mask")
-
-// var mask3 = applyMask(matrixCopy, maskFormula3)
-// printMatrix(mask3)
-
-// console.log("fifth mask")
-
-// var mask4 = applyMask(matrixCopy, maskFormula4)
-// printMatrix(mask4)
-
-// console.log("sixth mask")
-
-// var mask5 = applyMask(matrixCopy, maskFormula5)
-// printMatrix(mask5)
-
-
-// console.log("eigth mask")
-
-// var mask7 = applyMask(matrixCopy, maskFormula7)
-// printMatrix(mask7)
-
-
-
-

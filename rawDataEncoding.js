@@ -383,8 +383,7 @@ function encodeNumericMode(textToEncode) {
 function encodeAlphanumericMode(textToEncode) {
 
   let splittedString = splitString(textToEncode, 2);
-  // console.log("The splitted string in twos: ")
-  // console.log(splittedString)
+
   let charA = "";
   let charB = "";
   let twoChars = "";
