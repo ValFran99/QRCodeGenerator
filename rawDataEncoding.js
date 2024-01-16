@@ -1,22 +1,5 @@
 import { splitString } from "./usedFunctions.js";
 import { createErrorCorrectionCodewords } from "./errorCorrection.js";
-// Usable versions 3, 6, 7, 13, 20, 30
-// const QR_VERSION = 13;
-// const QR_ERROR_CORRECTION = "Q";
-// For version 13 and error correction q
-// const TOTAL_BITS = 1952;
-
-// const DATA_BY_VERSION_AND_ECLEVEL = {
-//   1: {
-//     "L": 152,
-//     "M": 128,
-//     "Q": 104,
-//     "H": 72
-//   },
-//   13: {
-//     "Q": 1952
-//   }
-// }
 
 const DATA_BY_VERSION_AND_ECLEVEL = {
   1: {
@@ -232,11 +215,8 @@ function encodeData(textToEncode, version, ecMode){
   } else{
     versionRange = "27-40";
   }
-  // console.log("text to encode: " + textToEncode)
-  // console.log("Its length: " + textToEncode.length)
   let enMode = getEncodingMode(textToEncode);
   let charCount = getCharCount(textToEncode.length, enMode, versionRange);
-  // console.log("And this is the charCount, should be 8 bit and 78: " + charCount)
   let encodedString = "";
 
   if (enMode == "0001"){
@@ -247,8 +227,6 @@ function encodeData(textToEncode, version, ecMode){
   if (enMode == "0010"){
     // alphanumeric
     encodedString = encodeAlphanumericMode(textToEncode);
-    // console.log("The encoded string: ")
-    // console.log(encodedString)
   }
 
   if (enMode == "0100"){
@@ -264,11 +242,7 @@ function encodeData(textToEncode, version, ecMode){
   }
   
   // adding terminator
-
   let encodedData = enMode + charCount + encodedString;
-  // console.log("Partial encoded data: " + encodedData)
-
-  // console.log("encoded data before any padding: " + encodedData);
 
   let terminator = (DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length < 4) ? DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length : 4;
   encodedData = encodedData.padEnd(encodedData.length + terminator, "0");
@@ -285,27 +259,13 @@ function encodeData(textToEncode, version, ecMode){
     encodedData = encodedData.padEnd(DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"], "1110110000010001");
   }
 
-  // console.log("encoded data after padding: " + encodedData);
-
   let codeWords = breakIntoCodeblocks(encodedData, version, ecMode);
-  // console.log("The codewords: ");
-  // console.log(codeWords)
   let ecCodeWords = createErrorCorrectionCodewords(codeWords, version, ecMode);
-  // console.log("The ec codewords: ");
-  // console.log(ecCodeWords);
-
-  // let finalMessage = ""
-
 
   let finalMessage = interleaveCW(codeWords);
-
-  
   finalMessage += interleaveCW(ecCodeWords);
-  
-  // console.log("The final message")
-  // console.log(finalMessage)
+
   let totalLength = finalMessage.length + REMAINDER_BITS_PER_VERSION[version]
-  // console.log(totalLength)
 
   return finalMessage.padEnd(totalLength, "0");
 }
@@ -393,8 +353,6 @@ function encodeAlphanumericMode(textToEncode) {
 
   for (let i = 0; i < splittedString.length; i++) {
     twoChars = splittedString[i];
-    
-    
     charA = twoChars[0];
     charAcode = charA in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charA] : parseInt(charA, 36);
     
@@ -406,8 +364,6 @@ function encodeAlphanumericMode(textToEncode) {
     charB = twoChars[1];
     charBcode = charB in ALPHA_SPECIAL_CODES ? ALPHA_SPECIAL_CODES[charB] : parseInt(charB, 36);
     var medSult = (45 * charAcode) + charBcode;
-    // console.log("The encoded result in int: ")
-    // console.log(medSult)
     alphaEncoded += medSult.toString(2).padStart(11, "0");
   }
 
@@ -436,25 +392,7 @@ function breakIntoCodeblocks(data, version, ecMode){
       }
     }
   }
-
   return codeBlocks;
 }
-
-const HARDCODED_DATA_FOR_TEST = "0100001101010101010001101000011001010111001001100101010111000010011101110011001000000110000100100000011001100111001001101111011011110110010000100000011101110110100001101111001000000111001001100101011000010110110001101100011110010010000001101011011011100110111101110111011100110010000001110111011010000110010101110010011001010010000001101000011010010111001100100000011101000110111101110111011001010110110000100000011010010111001100101110000011101100000100011110110000010001111011000001000111101100"
-
-
-// console.log(encodeData("HELLO WORLD", 5, "Q"));
-// console.log("Pls execute this man")
-// let dataCodewords = breakIntoCodeblocks(HARDCODED_DATA_FOR_TEST, 5, "Q")
-// console.log("The data codewords: ")
-// console.log(dataCodewords)
-// console.log("The ecCodewords: ")
-// let ecCodewords = createErrorCorrectionCodewords(dataCodewords, 5, "Q")
-// console.log(ecCodewords)
-// let exampleInterleaved = "";
-// exampleInterleaved += interleaveCW(dataCodewords)
-// exampleInterleaved += interleaveCW(ecCodewords)
-// console.log("everything interleaved: ")
-// console.log(exampleInterleaved)
 
 export { encodeData, breakIntoCodeblocks, DATA_BY_VERSION_AND_ECLEVEL };

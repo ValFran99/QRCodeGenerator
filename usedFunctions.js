@@ -1,5 +1,3 @@
-
-
 function splitString(data, n){
   let splitted = []
   let inter = []
@@ -40,10 +38,6 @@ function generateGaloisField(n, xorWith){
 }
 
 function multiplyWithGaloisFields(numberA, numberB, galoisField){
-  /* 
-    recibe dos numeros decimales y devuelve la multiplicación entre ellos teniendo el cuenta el field de galois dado
-    y devuelve el exponente resultado dentro del campo de galois
-    */
 
   let exponentToNumber = galoisField[0];
   let numberToExponent = galoisField[1];
@@ -78,16 +72,5 @@ function convertToExponents(polyInNumbers, numberToExponent){
   }
   return polyInNumbers;
 }
-
-function checkFirstPenaltyScore(matrix){
-  
-}
-
-
-
-
-// console.log(generateGaloisField(256, 285))
-
-// console.log(multiplyWithGaloisFields(7, 9, generateGaloisField(256, 285)))
 
 export { splitString, generateGaloisField, multiplyWithGaloisFields, convertToNumbers, convertToExponents};

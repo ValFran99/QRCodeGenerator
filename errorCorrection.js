@@ -1,8 +1,3 @@
-import { encodeData, DATA_BY_VERSION_AND_ECLEVEL } from "./rawDataEncoding.js";
-import { convertToNumbers, convertToExponents } from "./usedFunctions.js";
-
-// Temp stuff
-
 const EXP = [1,2,4,8,16,32,64,128,29,58,116,232,205,135,19,38,76,152,45,90,180,117,234,201,
                             143,3,6,12,24,48,96,192,157,39,78,156,37,74,148,53,106,212,181,119,238,193,159,
                             35,70,140,5,10,20,40,80,160,93,186,105,210,185,111,222,161,95,190,97,194,153,47,
@@ -72,9 +67,6 @@ const EC_CODWORDS_PER_BLOCK = {
   }
 }
 
-// const GEN_POLY_COEFF_BY_VERSION_AND_ECMODE = [0, 229, 121, 135, 48, 211, 117, 251, 126, 159, 180, 169,
-//   152, 192, 226, 228, 218, 111, 0, 117, 232, 87, 96, 227, 21];
-
 function createMessagePolynomial(block){
   let codeword = "";
   let poly = [];
@@ -85,10 +77,6 @@ function createMessagePolynomial(block){
   }
   ogMesPolyLength = poly.length;
 
-  // // now we multiply the polynomial by x^n, with n being the no. of ec codewords needed per block
-  // for (let i = 0; i < EC_CODWORDS_PER_BLOCK[version][ecMode]; i++ ){
-  //   poly.push(0);
-  // }
   return [poly, ogMesPolyLength];
 }
 
@@ -107,20 +95,13 @@ function exponentArrToNumber(arr){
   return arr
 }
 
+// Modified version of the algo used here https://qrlogo.kaarposoft.dk/qrencode.html
+// (The one from the guide im following (thonky) just doesnt work properly, idk why)
 function polynomialDivision(msg, n_ec_words) {
-  // return parity bytes
 
-  // Simulate a LFSR with generator polynomial for n byte RS code.
-
-  // if (this.gen_poly == null) { this.gen_poly = this.genPoly(this.n_ec_bytes); }
-  // let gen_poly = [117,68,11,164,154,122,127,1]
-  // console.log("would use")
-  // console.log(GEN_POLY_COEFF_BY_EC_CODEWORDS[n_ec_words])
   let gen_poly = exponentArrToNumber(JSON.parse(JSON.stringify(GEN_POLY_COEFF_BY_EC_CODEWORDS[n_ec_words]))).reverse()
   let fullGenPolyLength = ((4*gen_poly.length) - gen_poly.length)
-  
-  // console.log("The used genPoly")
-  // console.log(gen_poly)
+
   var LFSR = new Array(gen_poly.length);
   var i;
 
@@ -140,67 +121,9 @@ function polynomialDivision(msg, n_ec_words) {
 
   var parity = [];
   for (i = LFSR.length - 2; i >= 0; i--) { parity.push(LFSR[i]); }
-  // console.log("The ec codewords")
-  // console.log(parity)
+
   return decArrToBinary(parity);
 }
-
-
-// function polynomialDivision(polMes, polGen, polMesOGLength){
-
-//   console.log("The message polynomial: ")
-//   console.log(polMes)
-//   // so I dont mutate the original generator by mistake
-//   let usablePolGen = JSON.parse(JSON.stringify(polGen));
-//   let ogPolGen = JSON.parse(JSON.stringify(polGen));
-
-
-//   for(let i = 0; i < polMesOGLength; i++){
-//     console.log("#####################################")
-//     console.log("            DIVISION NUMBER: " + i);
-//     console.log("#####################################")
-//     let firstExponent = NUMBER_TO_EXPONENT[polMes[0]];
-//     // multiply the generator poly with the first term of the message poly
-//     for(let j = 0; j < usablePolGen.length; j++){
-//       if(usablePolGen[j] == -1){
-//         continue;
-//       }
-//       let midSult = firstExponent + usablePolGen[j];
-//       usablePolGen[j] = midSult > 255 ? midSult % 255 : midSult;
-//     }
-//     // convert the gen poly to integers
-//     usablePolGen = convertToNumbers(usablePolGen, EXP);
-    
-//     // now we have to xor the terms of the message poly with the terms of the generator poly
-//     console.log("The gen poly for the operation: ")
-//     console.log(usablePolGen)
-//     console.log("The message poly for the operation: ")
-//     console.log(polMes)
-//     for(let k = 0; k < usablePolGen.length; k++){
-//       if(usablePolGen[k] == -1){
-//         continue;
-//       }
-//       polMes[k] = usablePolGen[k] ^ polMes[k];
-//     }
-//     // removes the unnecesary 0 at the beginning of the new message poly
-//     polMes.shift();
-//     // so both polys have the same length
-//     ogPolGen.pop()
-//     usablePolGen = [...ogPolGen]
-//     console.log("The result message poly: ")
-//     console.log(polMes)
-//     console.log("The usable generator: ")
-//     console.log(ogPolGen)
-
-//   }
-
-//   // console.log("If it mutates or not the polys: ")
-//   // console.log(GEN_POLY_COEFF_BY_VERSION_AND_ECMODE[5]["Q"])
-//   console.log("####################################################")
-//   console.log("#                FINISHED THE GROUP                #")
-//   console.log("####################################################")
-//   return decArrToBinary(polMes);
-// }
 
 function decArrToBinary(arr){
   let binArr = [];
@@ -209,8 +132,6 @@ function decArrToBinary(arr){
   }
   return binArr
 }
-
-// this depends on the length of the original message polynomials, that depends on the amount of codewords per block
 
 function createErrorCorrectionCodewords(codeBlocks, version, ecMode){
 
@@ -234,42 +155,16 @@ function createErrorCorrectionCodewords(codeBlocks, version, ecMode){
 
 function ecCodewordsByBlock(block, version, ecMode){
   let mesPoly = [];
-  let lenPoly = 0;
   let ogMesPolyLength = 0;
   let messagePolyArr = [];
   
   messagePolyArr = createMessagePolynomial(block);
-  // console.log("Everything devuelto lol: ")
-  // console.log(messagePolyArr);
+
   mesPoly = messagePolyArr[0];
   ogMesPolyLength = messagePolyArr[1];
-  // console.log(mesPoly)
-  // lenPoly = mesPoly.length - GEN_POLY_COEFF_BY_EC_CODEWORDS[EC_CODWORDS_PER_BLOCK[version][ecMode]].length;
-  // for(let j = 0; j < lenPoly; j++){
-  //   GEN_POLY_COEFF_BY_EC_CODEWORDS[EC_CODWORDS_PER_BLOCK[version][ecMode]].push(-1);
-  // }
-  // Ahora ya tengo los dos polinomios, puedo empezar a operar
-  // let genPoly = GEN_POLY_COEFF_BY_EC_CODEWORDS[EC_CODWORDS_PER_BLOCK[version][ecMode]]
-  // genPoly = exponentArrToNumber(genPoly)
-  // console.log("The gen poly: ")
-  // console.log(genPoly)
-  // console.log("The message poly: ")
-  // console.log(mesPoly)
 
-  // for(let i = 0; i < (genPoly.length - 1); i++){
-  //   mesPoly.push(0)
-  // }
-  // console.log("The message polynomial")
-  // console.log(mesPoly)
   return polynomialDivision(mesPoly, EC_CODWORDS_PER_BLOCK[version][ecMode]);
 
 }
-
-// createErrorCorrectionCodewords(encodeData("HELLO WORLD"))
-// console.log("before first function: " + HARD_GEN)
-// console.log(polynomialDivision([...HARD_MES], HARD_GEN, 16));
-// console.log("after first function: " + HARD_GEN)
-// console.log(polynomialDivision([...HARD_MES], HARD_GEN, 16));
-// console.log("after second function: " + HARD_GEN)
 
 export { createErrorCorrectionCodewords };

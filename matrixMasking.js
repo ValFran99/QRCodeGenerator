@@ -1,6 +1,3 @@
-import { createMatrix, printMatrix } from "./matrixGenerator.js";
-import { encodeData } from "./rawDataEncoding.js";
-
 function maskFormula1(column, row){ return ((row + column) % 2) == 0; }
 
 function maskFormula2(column, row){ return (row % 2) == 0; }
@@ -202,7 +199,7 @@ function calculateAllPenaltyRules(maskedMatrix){
   let penaltyAcc = 0;
   let stackCol = [];
   let stackRow = [];
-  // this is so ugly, i cant believe i miss pointers lol
+  // man i miss pointers
   let accCol = [0];
   let accRow = [0];
   let matrixSize = maskedMatrix.length;
@@ -239,7 +236,7 @@ function calculateAllPenaltyRules(maskedMatrix){
   }
   
   // third rule
-  // Its pretty ugly bc im trying to do everything in one pass
+  // same, trying to do everything in one pass
   let pattern1 = "10111010000";
   let pattern2 = "00001011101";
   let flagPtrn1Row = true;
@@ -333,31 +330,4 @@ function calculatePenaltyToEveryMask(matrix){
   return everyPenalty
 }
 
-// this should go to another file really
-function finishMatrix(stringToEncode, version, ecLevel){
-
-  let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
-  let everyPenalty = calculatePenaltyToEveryMask(matrix);
-  let minPenalty = Math.min(...everyPenalty);
-  let indexOfMin = everyPenalty.indexOf(minPenalty);
-  let appliedMask = indexOfMin + 1;
-
-  let maskedMatrix = applyMask(matrix, ARRAY_OF_FORMULAS[indexOfMin]);
-  fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
-  
-  
-  if(version >= 7){
-    fillWithVersionString(maskedMatrix, version);
-  }
-
-  return maskedMatrix
-}
-
-var sevenLTest = "Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans?"
-var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
-var testStringV5 = "https://www.youtube.com/watch?v=sRgUrKWiXQs"
-var testStringV1 = "hello world"
-
-var masked = finishMatrix(testStringV1, 1, "L")
-
-printMatrix(masked)
+export { calculatePenaltyToEveryMask, applyMask, fillWithFormatString, fillWithVersionString, ARRAY_OF_FORMULAS };
