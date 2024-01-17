@@ -3,9 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>qr</title>
+  <script
+  src="https://code.jquery.com/jquery-3.7.0.js"
+  integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+  crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet">
+
+  <!-- <script src="./scripts/qrCodeGenerator.js" type="module"></script> -->
+
+  <script type="module">
+    import { createQRCode } from "./scripts/qrCodeGenerator.js";
+    window.createQRCode = createQRCode;
+  </script>
+
+  <script>
+    $(document).ready(function(){
+      $("#qr-text").on("change", $({param1: this, param2: 5, param3: "L"}), createQRCode);
+    })
+  </script>
+  
+  <title id="page-title">QR Code Generator</title>
 </head>
 <body>
-  
+  <div class="title">
+    <label for="qr-text" class="label-input">Insert the qr code</label>
+    <div class="input-container">
+      <input type="text" id="qr-text" class="text-input">
+      <input type="submit" value="Continue" class="submit-button">
+    </div>
+  </div>
 </body>
 </html>

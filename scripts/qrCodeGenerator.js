@@ -2,8 +2,10 @@ import { calculatePenaltyToEveryMask, applyMask, fillWithFormatString, fillWithV
 import { createMatrix, printMatrix } from "./matrixGenerator.js";
 import { encodeData } from "./rawDataEncoding.js";
 
-function createQRCode(stringToEncode, version, ecLevel){
-
+function createQRCode(element){
+  let stringToEncode = element.currentTarget.value;
+  let version = element.data[0].param2;
+  let ecLevel = element.data[0].param3;
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
   let everyPenalty = calculatePenaltyToEveryMask(matrix);
   let minPenalty = Math.min(...everyPenalty);
@@ -18,15 +20,18 @@ function createQRCode(stringToEncode, version, ecLevel){
     fillWithVersionString(maskedMatrix, version);
   }
 
-  return maskedMatrix
+  console.log("All created boss")
+
+  return maskedMatrix;
 }
 
+export { createQRCode };
 
-var sevenLTest = "Hey guys, did you know that in terms of male human and female Pokemon breeding, Vaporeon is the most compatible Pokémon for humans?"
-var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
-var testStringV5 = "www.youtube.com/watch?v=sRgUrKWiXQs"
-var testStringV1 = "hello world"
+// var sevenLTest = "Hey guys, did you know that in terms of male human and female Pokemon breeding, Vaporeon is the most compatible Pokémon for humans?"
+// var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
+// var testStringV5 = "www.youtube.com/watch?v=sRgUrKWiXQs"
+// var testStringV1 = "hello world"
 
-var masked = createQRCode(testStringV5, 5, "Q")
+// var masked = createQRCode(testStringV5, 5, "Q")
 
-printMatrix(masked)
+// printMatrix(masked)

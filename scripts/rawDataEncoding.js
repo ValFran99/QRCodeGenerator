@@ -199,15 +199,14 @@ function getEncodingMode(textToEncode){
 }
 
 function getCharCount(textLength, mode, versionRange){
+  console.log(CHAR_COUNT[versionRange][mode])
   let binary = textLength.toString(2);
-  
   return binary.padStart(CHAR_COUNT[versionRange][mode], "0");
 }
 
 function encodeData(textToEncode, version, ecMode){
 
   let versionRange;
-
   if(version < 10){
     versionRange = "1-9"
   } else if (version < 27){

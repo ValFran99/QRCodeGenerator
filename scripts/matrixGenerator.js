@@ -1,6 +1,3 @@
-import { encodeData } from "./rawDataEncoding.js";
-
-
 var ALIGNMENT_PATTERN_CENTER_COORDS = {
   5: [6, 30],
   7: [6, 22, 38],
@@ -94,11 +91,8 @@ function addAlignmentPatterns(matrix, coords){
   for(let i = 0; i < pairs.length; i++){
     let startX = pairs[i][0];
     let startY = pairs[i][1];
-    // console.log("checking pair: ")
-    // console.log([startX, startY])
+
     if(!checkAllCornersOK(matrix, [startX, startY])){
-      // console.log("skipped")
-      // console.log([startX, startY])
       continue;
     }
 
@@ -213,33 +207,25 @@ function createMatrix(data, version){
   
     reserveSpaceForVersion(matrix, bottomLeftSpace, [size - 11, 0]);
   }
-
-  // printMatrix(matrix);
   fillPattern(matrix, data);
-  // printMatrix(matrix);
 
   return matrix;
 }
 
 function fillPattern(matrix, dataPattern){
-  // console.log("This is the data pattern: ")
-  // console.log(dataPattern)
+
   let size = matrix.length;
   let binaryIndex = 0;
   let i;
   let j;
   let lastJ = size - 1;
   while(binaryIndex < dataPattern.length){
-    // console.log("j is in the upwards: " + j);
     for(i = size - 1; i >= 0; i--){
       for(j = lastJ; j > lastJ - 2; j--){
-        // console.log("I need to write a: ")
-        // console.log(dataPattern[binaryIndex])
         if(undefined != matrix[i][j]){
           continue;
         }
         matrix[i][j] = [dataPattern[binaryIndex], 0]
-        // printMatrix(matrix);
         binaryIndex++;
         
       }
@@ -251,7 +237,6 @@ function fillPattern(matrix, dataPattern){
 
     lastJ = j;
 
-    // console.log("j is in the downwards: " + j);
     if(j == 6){
       lastJ = 5;
       
@@ -259,13 +244,10 @@ function fillPattern(matrix, dataPattern){
 
     for(i = 0; i < size; i++){
       for(j = lastJ; j > lastJ - 2; j--){
-        // console.log("I need to write a: ")
-        // console.log(dataPattern[binaryIndex])
         if(undefined != matrix[i][j]){
           continue;
         }
         matrix[i][j] = [dataPattern[binaryIndex], 0]
-        // printMatrix(matrix);
         binaryIndex++;
       }
     }
@@ -297,6 +279,3 @@ function printMatrix(matrix){
 }
 
 export {createMatrix, printMatrix}
-
-// let matrix = createMatrix(encodeData("HELLO WORLD", 1, "Q"), 1);
-// printMatrix(matrix)
