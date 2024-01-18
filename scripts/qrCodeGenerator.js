@@ -6,9 +6,11 @@ import { encodeData } from "./rawDataEncoding.js";
 
 function createQRCode(element){
   // console.log("Placeholder")
-  let stringToEncode = element.currentTarget.value;
-  let version = element.data[0].param2;
-  let ecLevel = element.data[0].param3;
+  // console.log(element.children);
+  let stringToEncode = element.children[1].value;
+  let ecLevel = element.children[3].value;
+  let version = element.children[5].value;
+  // console.log(version)
   _createQRCode(stringToEncode, version, ecLevel)
 }
 
@@ -28,8 +30,20 @@ function _createQRCode(stringToEncode, version, ecLevel){
   }
 
   // console.log("All created boss")
-  printMatrix(maskedMatrix);
+  drawCanvas(maskedMatrix);
   return maskedMatrix;
+}
+
+function drawCanvas(qrCode){
+  let canvas;
+  if(document.getElementById("qrCanvas") == undefined){
+    canvas = document.createElement("canvas");
+    canvas.id = "qrCanvas";
+    canvas.height = canvas.width = qrCode.length + 8;
+    document.getElementById("mainDiv").appendChild(canvas);
+  } else{
+    canvas = document.getElementById("qrCanvas");
+  }
 }
 
 export { createQRCode };

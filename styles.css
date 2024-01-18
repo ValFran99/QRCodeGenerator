@@ -1,0 +1,12 @@
+#inputContainer{
+  display: flexbox;
+  border: 1px solid black;
+}
+
+.labelInput, .dataInput{
+  display: block;
+}
+
+#qrCanvas{
+  border: 1px solid black;
+}

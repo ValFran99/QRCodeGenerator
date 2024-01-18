@@ -19,20 +19,34 @@
     window.createQRCode = createQRCode;
   </script>
 
-  <script>
+  <!-- <script>
     $(document).ready(function(){
       $("#qr-text").on("change", $({param1: this, param2: 5, param3: "L"}), createQRCode);
     })
-  </script>
+  </script> -->
   
-  <title id="page-title">QR Code Generator</title>
+  <title id="pageTitle">QR Code Generator</title>
 </head>
 <body>
-  <div class="title">
-    <label for="qr-text" class="label-input">Insert the qr code</label>
-    <div class="input-container">
-      <input type="text" id="qr-text" class="text-input">
-      <input type="submit" value="Continue" class="submit-button">
+  <div id="mainDiv">
+    <div id="inputContainer">
+      <form action="javascript:;" onsubmit="createQRCode(this)" id="QRform">
+        <label for="qrText" class="labelInput">Insert the qr code</label>
+        <input type="text" id="qrText" class="dataInput">
+        <label for="ecLevel" class="labelInput">Select the error correction level</label>
+        <select name="EClevel" id="ecLevel" class="dataInput">
+          <option value=""> --- </option>
+          <option value="L">L (7% data recovery)</option>
+          <option value="M">M (15% data recovery)</option>
+          <option value="Q">Q (25% data recovery)</option>
+          <option value="H">H (30% data recovery)</option>
+        </select>
+        <!-- This is placeholder, should be automatic in the future -->
+        <label for="versionSelector" class="labelInput">Select the desired version</label>
+        <input type="number" id="versionSelector" name="version" min="1" max="40" class="dataInput">
+        <input type="submit" value="Continue" class="dataInput">
+
+      </form>
     </div>
   </div>
 </body>

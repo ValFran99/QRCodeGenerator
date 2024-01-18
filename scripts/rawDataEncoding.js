@@ -326,7 +326,8 @@ function encodeData(textToEncode, version, ecMode){
   
   // adding terminator
   let encodedData = enMode + charCount + encodedString;
-
+  // console.log(version)
+  // console.log(ecMode)
   let terminator = (DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length < 4) ? DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length : 4;
   encodedData = encodedData.padEnd(encodedData.length + terminator, "0");
 
