@@ -2,10 +2,17 @@ import { calculatePenaltyToEveryMask, applyMask, fillWithFormatString, fillWithV
 import { createMatrix, printMatrix } from "./matrixGenerator.js";
 import { encodeData } from "./rawDataEncoding.js";
 
+
+
 function createQRCode(element){
+  // console.log("Placeholder")
   let stringToEncode = element.currentTarget.value;
   let version = element.data[0].param2;
   let ecLevel = element.data[0].param3;
+  _createQRCode(stringToEncode, version, ecLevel)
+}
+
+function _createQRCode(stringToEncode, version, ecLevel){
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
   let everyPenalty = calculatePenaltyToEveryMask(matrix);
   let minPenalty = Math.min(...everyPenalty);
@@ -20,8 +27,8 @@ function createQRCode(element){
     fillWithVersionString(maskedMatrix, version);
   }
 
-  console.log("All created boss")
-
+  // console.log("All created boss")
+  printMatrix(maskedMatrix);
   return maskedMatrix;
 }
 
@@ -32,6 +39,6 @@ export { createQRCode };
 // var testStringV5 = "www.youtube.com/watch?v=sRgUrKWiXQs"
 // var testStringV1 = "hello world"
 
-// var masked = createQRCode(testStringV5, 5, "Q")
+// var masked = _createQRCode(testStringV1, 5, "L")
 
 // printMatrix(masked)
