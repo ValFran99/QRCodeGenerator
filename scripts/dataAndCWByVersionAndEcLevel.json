@@ -187,7 +187,7 @@
       }
     },
     "Q": {
-      "totalDataBits": 132,
+      "totalDataBits": 1056,
       "ecWordsAndBlocks": {
         "blocksInGroup1": 4,
         "codewordsPerBlock1": 16,
@@ -198,6 +198,74 @@
       "totalDataBits": 800,
       "ecWordsAndBlocks": {
         "blocksInGroup1": 4,
+        "codewordsPerBlock1": 12,
+        "codeWordsPerBlock2": 13
+      }
+    }
+  },
+  "10": {
+    "L": {
+      "totalDataBits": 2192,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 68,
+        "codeWordsPerBlock2": 69
+      }
+    },
+    "M": {
+      "totalDataBits": 1728,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 43,
+        "codeWordsPerBlock2": 44
+      }
+    },
+    "Q": {
+      "totalDataBits": 1232,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 6,
+        "codewordsPerBlock1": 19,
+        "codeWordsPerBlock2": 20
+      }
+    },
+    "H": {
+      "totalDataBits": 976,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 6,
+        "codewordsPerBlock1": 15,
+        "codeWordsPerBlock2": 16
+      }
+    }
+  },
+  "11": {
+    "L": {
+      "totalDataBits": 2592,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 81,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 2032,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 50,
+        "codeWordsPerBlock2": 51
+      }
+    },
+    "Q": {
+      "totalDataBits": 1440,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 22,
+        "codeWordsPerBlock2": 23
+      }
+    },
+    "H": {
+      "totalDataBits": 1120,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 3,
         "codewordsPerBlock1": 12,
         "codeWordsPerBlock2": 13
       }
@@ -234,6 +302,210 @@
         "blocksInGroup1": 12,
         "codewordsPerBlock1": 11,
         "codeWordsPerBlock2": 12
+      }
+    }
+  },
+  "15": {
+    "L": {
+      "totalDataBits": 4184,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 5,
+        "codewordsPerBlock1": 87,
+        "codeWordsPerBlock2": 88
+      }
+    },
+    "M": {
+      "totalDataBits": 3320,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 5,
+        "codewordsPerBlock1": 41,
+        "codeWordsPerBlock2": 42
+      }
+    },
+    "Q": {
+      "totalDataBits": 2360,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 5,
+        "codewordsPerBlock1": 24,
+        "codeWordsPerBlock2": 25
+      }
+    },
+    "H": {
+      "totalDataBits": 1784,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 11,
+        "codewordsPerBlock1": 12,
+        "codeWordsPerBlock2": 13
+      }
+    }
+  },
+  "20": {
+    "L": {
+      "totalDataBits": 6888,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 3,
+        "codewordsPerBlock1": 107,
+        "codeWordsPerBlock2": 108
+      }
+    },
+    "M": {
+      "totalDataBits": 5352,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 3,
+        "codewordsPerBlock1": 41,
+        "codeWordsPerBlock2": 42
+      }
+    },
+    "Q": {
+      "totalDataBits": 3880,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 15,
+        "codewordsPerBlock1": 24,
+        "codeWordsPerBlock2": 25
+      }
+    },
+    "H": {
+      "totalDataBits": 3080,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 15,
+        "codewordsPerBlock1": 15,
+        "codeWordsPerBlock2": 16
+      }
+    }
+  },
+  "25": {
+    "L": {
+      "totalDataBits": 10208,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 8,
+        "codewordsPerBlock1": 106,
+        "codeWordsPerBlock2": 107
+      }
+    },
+    "M": {
+      "totalDataBits": 8000,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 8,
+        "codewordsPerBlock1": 47,
+        "codeWordsPerBlock2": 48
+      }
+    },
+    "Q": {
+      "totalDataBits": 5744,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 7,
+        "codewordsPerBlock1": 24,
+        "codeWordsPerBlock2": 25
+      }
+    },
+    "H": {
+      "totalDataBits": 4304,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 22,
+        "codewordsPerBlock1": 15,
+        "codeWordsPerBlock2": 16
+      }
+    }
+  },
+  "30": {
+    "L": {
+      "totalDataBits": 13880,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 5,
+        "codewordsPerBlock1": 115,
+        "codeWordsPerBlock2": 116
+      }
+    },
+    "M": {
+      "totalDataBits": 10984,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 19,
+        "codewordsPerBlock1": 47,
+        "codeWordsPerBlock2": 48
+      }
+    },
+    "Q": {
+      "totalDataBits": 7880,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 15,
+        "codewordsPerBlock1": 24,
+        "codeWordsPerBlock2": 25
+      }
+    },
+    "H": {
+      "totalDataBits": 5960,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 23,
+        "codewordsPerBlock1": 15,
+        "codeWordsPerBlock2": 16
+      }
+    }
+  },
+  "35": {
+    "L": {
+      "totalDataBits": 18448,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 12,
+        "codewordsPerBlock1": 121,
+        "codeWordsPerBlock2": 122
+      }
+    },
+    "M": {
+      "totalDataBits": 14496,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 12,
+        "codewordsPerBlock1": 47,
+        "codeWordsPerBlock2": 48
+      }
+    },
+    "Q": {
+      "totalDataBits": 10288,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 39,
+        "codewordsPerBlock1": 24,
+        "codeWordsPerBlock2": 25
+      }
+    },
+    "H": {
+      "totalDataBits": 7888,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 22,
+        "codewordsPerBlock1": 15,
+        "codeWordsPerBlock2": 16
+      }
+    }
+  },
+  "40": {
+    "L": {
+      "totalDataBits": 23648,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 19,
+        "codewordsPerBlock1": 118,
+        "codeWordsPerBlock2": 119
+      }
+    },
+    "M": {
+      "totalDataBits": 18672,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 18,
+        "codewordsPerBlock1": 47,
+        "codeWordsPerBlock2": 48
+      }
+    },
+    "Q": {
+      "totalDataBits": 13328,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 34,
+        "codewordsPerBlock1": 24,
+        "codeWordsPerBlock2": 25
+      }
+    },
+    "H": {
+      "totalDataBits": 10208,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 20,
+        "codewordsPerBlock1": 15,
+        "codeWordsPerBlock2": 16
       }
     }
   }

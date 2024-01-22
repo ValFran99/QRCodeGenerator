@@ -60,11 +60,16 @@ function createCanvas(qrCode){
       canvasPixelArray[alphaIndex] = 255;
     }
   }
-
+  if(qrCode.length < 93){
+    canvas.width = canvas.height = Math.floor(window.innerHeight / 2);
+  } else if(qrCode.length < 157){
+    canvas.width = canvas.height = Math.floor(window.innerHeight / 1.5);
+  } else{
+    canvas.width = canvas.height = Math.floor(window.innerHeight / 1.2);
+  }
 
   // stackoverflow my beloved
   // https://stackoverflow.com/questions/3448347/how-to-scale-an-imagedata-in-html-canvas (last answer)
-  canvas.width = canvas.height = canvas.width * 6;
   createImageBitmap(canvasImageData).then((data) => {
     context.imageSmoothingEnabled = false; // keep pixel perfect
     context.drawImage(data, 0, 0, canvas.width, canvas.height)
