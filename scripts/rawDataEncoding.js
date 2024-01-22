@@ -2,218 +2,218 @@ import { splitString } from "./usedFunctions.js";
 import { createErrorCorrectionCodewords } from "./errorCorrection.js";
 
 // Actually this could be a JSON file lol
-// const DATA_BY_VERSION_AND_ECLEVEL = {
-//   1: {
-//     "L": {
-//       "totalDataBits": 152,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 19,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "M": {
-//       "totalDataBits": 128,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 16,
-//         "codeWordsPerBlock2": 0,
-//       }
-//     },
-//     "Q": {
-//       "totalDataBits": 104,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 13,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "H": {
-//       "totalDataBits": 72,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 9,
-//         "codeWordsPerBlock2": 0
-//       }
-//     }
-//   },
-//   2: {
-//     "L": {
-//       "totalDataBits": 272,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 34,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "M": {
-//       "totalDataBits": 224,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 28,
-//         "codeWordsPerBlock2": 0,
-//       }
-//     },
-//     "Q": {
-//       "totalDataBits": 176,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 22,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "H": {
-//       "totalDataBits": 128,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 16,
-//         "codeWordsPerBlock2": 0
-//       }
-//     }
-//   },
-//   3: {
-//     "L": {
-//       "totalDataBits": 440,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 55,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "M": {
-//       "totalDataBits": 352,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 44,
-//         "codeWordsPerBlock2": 0,
-//       }
-//     },
-//     "Q": {
-//       "totalDataBits": 272,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 2,
-//         "codewordsPerBlock1": 17,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "H": {
-//       "totalDataBits": 208,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 2,
-//         "codewordsPerBlock1": 13,
-//         "codeWordsPerBlock2": 0
-//       }
-//     }
-//   },
-//   5: {
-//     "L": {
-//       "totalDataBits": 864,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 1,
-//         "codewordsPerBlock1": 108,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "M": {
-//       "totalDataBits": 688,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 2,
-//         "codewordsPerBlock1": 43,
-//         "codeWordsPerBlock2": 0,
-//       }
-//     },
-//     "Q": {
-//       "totalDataBits": 496,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 2,
-//         "codewordsPerBlock1": 15,
-//         "codeWordsPerBlock2": 16
-//       }
-//     },
-//     "H": {
-//       "totalDataBits": 368,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 2,
-//         "codewordsPerBlock1": 11,
-//         "codeWordsPerBlock2": 12
-//       }
-//     }
-//   },
-//   7: {
-//     "L": {
-//       "totalDataBits": 1248,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 2,
-//         "codewordsPerBlock1": 78,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "M": {
-//       "totalDataBits": 992,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 4,
-//         "codewordsPerBlock1": 31,
-//         "codeWordsPerBlock2": 0,
-//       }
-//     },
-//     "Q": {
-//       "totalDataBits": 704,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 2,
-//         "codewordsPerBlock1": 14,
-//         "codeWordsPerBlock2": 15
-//       }
-//     },
-//     "H": {
-//       "totalDataBits": 528,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 4,
-//         "codewordsPerBlock1": 13,
-//         "codeWordsPerBlock2": 14
-//       }
-//     }
-//   },
-//   13: {
-//     "L": {
-//       "totalDataBits": 3424,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 4,
-//         "codewordsPerBlock1": 107,
-//         "codeWordsPerBlock2": 0
-//       }
-//     },
-//     "M": {
-//       "totalDataBits": 2672,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 8,
-//         "codewordsPerBlock1": 37,
-//         "codeWordsPerBlock2": 38,
-//       }
-//     },
-//     "Q": {
-//       "totalDataBits": 1952,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 8,
-//         "codewordsPerBlock1": 20,
-//         "codeWordsPerBlock2": 21
-//       }
-//     },
-//     "H": {
-//       "totalDataBits": 1440,
-//       "ecWordsAndBlocks": {
-//         "blocksInGroup1": 12,
-//         "codewordsPerBlock1": 11,
-//         "codeWordsPerBlock2": 12
-//       }
-//     }
-//   },
-// };
+const DATA_BY_VERSION_AND_ECLEVEL = {
+  1: {
+    "L": {
+      "totalDataBits": 152,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 19,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 128,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 16,
+        "codeWordsPerBlock2": 0,
+      }
+    },
+    "Q": {
+      "totalDataBits": 104,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 13,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "H": {
+      "totalDataBits": 72,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 9,
+        "codeWordsPerBlock2": 0
+      }
+    }
+  },
+  2: {
+    "L": {
+      "totalDataBits": 272,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 34,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 224,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 28,
+        "codeWordsPerBlock2": 0,
+      }
+    },
+    "Q": {
+      "totalDataBits": 176,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 22,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "H": {
+      "totalDataBits": 128,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 16,
+        "codeWordsPerBlock2": 0
+      }
+    }
+  },
+  3: {
+    "L": {
+      "totalDataBits": 440,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 55,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 352,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 44,
+        "codeWordsPerBlock2": 0,
+      }
+    },
+    "Q": {
+      "totalDataBits": 272,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 17,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "H": {
+      "totalDataBits": 208,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 13,
+        "codeWordsPerBlock2": 0
+      }
+    }
+  },
+  5: {
+    "L": {
+      "totalDataBits": 864,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 1,
+        "codewordsPerBlock1": 108,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 688,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 43,
+        "codeWordsPerBlock2": 0,
+      }
+    },
+    "Q": {
+      "totalDataBits": 496,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 15,
+        "codeWordsPerBlock2": 16
+      }
+    },
+    "H": {
+      "totalDataBits": 368,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 11,
+        "codeWordsPerBlock2": 12
+      }
+    }
+  },
+  7: {
+    "L": {
+      "totalDataBits": 1248,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 78,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 992,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 31,
+        "codeWordsPerBlock2": 0,
+      }
+    },
+    "Q": {
+      "totalDataBits": 704,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 2,
+        "codewordsPerBlock1": 14,
+        "codeWordsPerBlock2": 15
+      }
+    },
+    "H": {
+      "totalDataBits": 528,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 13,
+        "codeWordsPerBlock2": 14
+      }
+    }
+  },
+  13: {
+    "L": {
+      "totalDataBits": 3424,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 4,
+        "codewordsPerBlock1": 107,
+        "codeWordsPerBlock2": 0
+      }
+    },
+    "M": {
+      "totalDataBits": 2672,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 8,
+        "codewordsPerBlock1": 37,
+        "codeWordsPerBlock2": 38,
+      }
+    },
+    "Q": {
+      "totalDataBits": 1952,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 8,
+        "codewordsPerBlock1": 20,
+        "codeWordsPerBlock2": 21
+      }
+    },
+    "H": {
+      "totalDataBits": 1440,
+      "ecWordsAndBlocks": {
+        "blocksInGroup1": 12,
+        "codewordsPerBlock1": 11,
+        "codeWordsPerBlock2": 12
+      }
+    }
+  },
+};
 
-var DATA_BY_VERSION_AND_ECLEVEL = {};
+// var DATA_BY_VERSION_AND_ECLEVEL = {};
 
-fetch("./scripts/dataAndCWByVersionAndEcLevel.json")
-    .then((response) => response.json())
-    .then((json) => DATA_BY_VERSION_AND_ECLEVEL = json)
+// fetch("./scripts/dataAndCWByVersionAndEcLevel.json")
+//     .then((response) => response.json())
+//     .then((json) => DATA_BY_VERSION_AND_ECLEVEL = json)
 
 const REMAINDER_BITS_PER_VERSION = {
   1: 0,

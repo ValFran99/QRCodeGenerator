@@ -5,12 +5,9 @@ import { encodeData } from "./rawDataEncoding.js";
 
 
 function createQRCode(element){
-  // console.log("Placeholder")
-  // console.log(element.children);
   let stringToEncode = element.children[1].value;
   let ecLevel = element.children[3].value;
   let version = element.children[5].value;
-  // console.log(version)
   _createQRCode(stringToEncode, version, ecLevel)
 }
 
@@ -29,21 +26,67 @@ function _createQRCode(stringToEncode, version, ecLevel){
     fillWithVersionString(maskedMatrix, version);
   }
 
-  // console.log("All created boss")
-  drawCanvas(maskedMatrix);
+  createCanvas(maskedMatrix);
   return maskedMatrix;
 }
 
-function drawCanvas(qrCode){
-  let canvas;
-  if(document.getElementById("qrCanvas") == undefined){
-    canvas = document.createElement("canvas");
-    canvas.id = "qrCanvas";
-    canvas.height = canvas.width = qrCode.length + 8;
-    document.getElementById("mainDiv").appendChild(canvas);
-  } else{
-    canvas = document.getElementById("qrCanvas");
+function getColorIndicesForCoord(x, y, width, offset){
+  const red = (y * (width * 4) + x * 4) + offset;
+  return [red, red + 1, red + 2, red + 3];
+}
+
+function createCanvas(qrCode){
+
+  let canvas = document.getElementById("qrCanvas");
+
+  canvas.height = canvas.width = qrCode.length + 8;
+
+  let context = canvas.getContext("2d");
+
+  let canvasImageData = context.getImageData(0, 0, canvas.width, canvas.width);
+  let canvasPixelArray = canvasImageData.data;
+  let colorIndices;
+  let redIndex, greenIndex, blueIndex, alphaIndex;
+  let valueToSet;
+
+  for(let col = 0; col < qrCode.length; col++){
+    for(let row = 0; row < qrCode.length; row++){
+      colorIndices = getColorIndicesForCoord(row, col, canvas.width, canvas.width * 16 + 16);
+      [redIndex, greenIndex, blueIndex, alphaIndex] = colorIndices;
+      
+      valueToSet = (qrCode[col][row][0] == 1)? 0 : 255;
+
+      canvasPixelArray[redIndex] = canvasPixelArray[greenIndex] = canvasPixelArray[blueIndex] = valueToSet;
+      canvasPixelArray[alphaIndex] = 255;
+    }
   }
+
+
+  // stackoverflow my beloved
+  // https://stackoverflow.com/questions/3448347/how-to-scale-an-imagedata-in-html-canvas (last answer)
+  canvas.width = canvas.height = canvas.width * 6;
+  createImageBitmap(canvasImageData).then((data) => {
+    context.imageSmoothingEnabled = false; // keep pixel perfect
+    context.drawImage(data, 0, 0, canvas.width, canvas.height)
+  })
+
+}
+
+function testLocal(stringToEncode, version, ecLevel){
+  let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
+  let everyPenalty = calculatePenaltyToEveryMask(matrix);
+  let minPenalty = Math.min(...everyPenalty);
+  let indexOfMin = everyPenalty.indexOf(minPenalty);
+  let appliedMask = indexOfMin + 1;
+
+  let maskedMatrix = applyMask(matrix, ARRAY_OF_FORMULAS[indexOfMin]);
+  fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
+  
+  
+  if(version >= 7){
+    fillWithVersionString(maskedMatrix, version);
+  }
+  return maskedMatrix
 }
 
 export { createQRCode };
@@ -53,6 +96,6 @@ export { createQRCode };
 // var testStringV5 = "www.youtube.com/watch?v=sRgUrKWiXQs"
 // var testStringV1 = "hello world"
 
-// var masked = _createQRCode(testStringV1, 5, "L")
+// var masked = testLocal(testStringV1, 1, "L")
 
 // printMatrix(masked)
