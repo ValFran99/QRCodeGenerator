@@ -11,3 +11,12 @@
   border: 1px solid black;
   /* scale: 4; */
 }
+
+#downloadLink{
+  display: none;
+}
+
+#placeholderLogo{
+  visibility: hidden;
+  display: none;
+}
