@@ -2,36 +2,11 @@ import { calculatePenaltyToEveryMask, applyMask, fillWithFormatString, fillWithV
 import { createMatrix, printMatrix } from "./matrixGenerator.js";
 import { encodeData } from "./rawDataEncoding.js";
 
+var VERSION_CAPACITIES = {};
 
-
-function createQRCode(element){
-  let stringToEncode = element.children[1].value;
-  let ecLevel = element.children[3].value;
-  let version = element.children[5].value;
-  _createQRCode(stringToEncode, version, ecLevel)
-}
-
-function _createQRCode(stringToEncode, version, ecLevel){
-  let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
-  let everyPenalty = calculatePenaltyToEveryMask(matrix);
-  let minPenalty = Math.min(...everyPenalty);
-  let indexOfMin = everyPenalty.indexOf(minPenalty);
-  let appliedMask = indexOfMin + 1;
-
-  let maskedMatrix = applyMask(matrix, ARRAY_OF_FORMULAS[indexOfMin]);
-  fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
-  
-  
-  if(version >= 7){
-    fillWithVersionString(maskedMatrix, version);
-  }
-
-  fillWithWhiteSpace(maskedMatrix);
-
-  createCanvas(maskedMatrix); 
-
-  return maskedMatrix;
-}
+fetch("./scripts/versionCapacities.json")
+    .then((response) => response.json())
+    .then((json) => VERSION_CAPACITIES = json)
 
 function fillWithWhiteSpace(matrix){
   let matrixLength = matrix.length;
@@ -54,7 +29,7 @@ function getColorIndicesForCoord(x, y, width, offset){
   return [red, red + 1, red + 2, red + 3];
 }
 
-function createCanvas(qrCode){
+function createCanvas(qrCode, backgroundColor, pixelDataColor, version){
 
   let canvas = document.getElementById("qrCanvas");
 
@@ -67,8 +42,6 @@ function createCanvas(qrCode){
   let colorIndices;
   let redIndex, greenIndex, blueIndex, alphaIndex;
   let colors;
-  let backgroundColor = [255, 255, 255];
-  let pixelDataColor = [0, 0, 0];
 
   for(let col = 0; col < qrCode.length; col++){
     for(let row = 0; row < qrCode.length; row++){
@@ -80,25 +53,28 @@ function createCanvas(qrCode){
       canvasPixelArray[greenIndex] = colors[1];
       canvasPixelArray[blueIndex] = colors[2];
 
-      // canvasPixelArray[redIndex] = canvasPixelArray[greenIndex] = canvasPixelArray[blueIndex] = valueToSet;
       canvasPixelArray[alphaIndex] = 255;
     }
   }
 
-
-  let center = Math.floor(qrCode.length / 2);
-  let logoLengthInPixels = Math.floor(qrCode.length / 4);
-  let topLeftCoord = center - Math.floor(logoLengthInPixels / 2);
-
-  
-  for(let i = topLeftCoord; i < (center + Math.floor(logoLengthInPixels / 2) + 1); i++){
-    for(let j = topLeftCoord; j < (center + Math.floor(logoLengthInPixels / 2) + 1); j++){
-      colorIndices = getColorIndicesForCoord(j, i, canvas.width, 0);
-      [redIndex, greenIndex, blueIndex, alphaIndex] = colorIndices;
-      canvasPixelArray[redIndex] = canvasPixelArray[greenIndex] = canvasPixelArray[blueIndex] = 255;
-      canvasPixelArray[alphaIndex] = 255;
+  // filling the center with white to make space for the logos
+  if(version != 1){
+    let center = Math.floor(qrCode.length / 2);
+    let logoLengthInPixels = Math.floor(qrCode.length / 4);
+    let topLeftCoord = center - Math.floor(logoLengthInPixels / 2);
+    
+    for(let i = topLeftCoord; i < (center + Math.floor(logoLengthInPixels / 2) + 1); i++){
+      for(let j = topLeftCoord; j < (center + Math.floor(logoLengthInPixels / 2) + 1); j++){
+        colorIndices = getColorIndicesForCoord(j, i, canvas.width, 0);
+        [redIndex, greenIndex, blueIndex, alphaIndex] = colorIndices;
+        canvasPixelArray[redIndex] = backgroundColor[0];
+        canvasPixelArray[greenIndex] = backgroundColor[1];
+        canvasPixelArray[blueIndex] = backgroundColor[2];
+        canvasPixelArray[alphaIndex] = 255;
+      }
     }
   }
+
 
   let logo = document.getElementById("placeholderLogo");
 
@@ -119,7 +95,9 @@ function createCanvas(qrCode){
   createImageBitmap(canvasImageData).then((data) => {
     context.imageSmoothingEnabled = false; // keep pixel perfect
     context.drawImage(data, 0, 0, canvas.width, canvas.height)
-    context.drawImage(logo, topLeftInCanvas + 1, topLeftInCanvas + 1, logoLengthInCanvas - 5, logoLengthInCanvas - 5);
+    if(version != 1){
+      context.drawImage(logo, topLeftInCanvas + 1, topLeftInCanvas + 1, logoLengthInCanvas - 5, logoLengthInCanvas - 5);
+    }
   })
 
 
@@ -133,6 +111,92 @@ function createCanvas(qrCode){
   }, 100);
   
 
+}
+
+function loadLogo(element){
+  const reader = new FileReader();
+  var image;
+
+  reader.onload = (event) => {
+    image = document.getElementById("placeholderLogo");
+    image.src = event.target.result;
+    image.style.display = "block";
+    image.style.visibility = "visible";
+  }
+
+  reader.readAsDataURL(element.children[0].files[0])
+} 
+
+function updateCanvas(canvas){
+
+}
+
+
+
+function getIndex(textToEncode){
+  let regexNumeric = /^\d+$/;
+  let regexAlphanumeric = /^[\dA-Z $%*+\-./:]*$/;
+  let regexByte = /^[\x00-\xff]*$/;
+  let regexKanji = /^[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}]*$/u;
+  if (regexNumeric.test(textToEncode)){
+    return 0;
+  }
+  
+  if (regexAlphanumeric.test(textToEncode)){
+    return 1;
+  }
+  
+  if (regexByte.test(textToEncode)){
+    return 2;
+  }
+  
+  if (regexKanji.test(textToEncode)){
+    return 3;
+  } 
+  return "0111";
+}
+
+function calculateVersion(textLength, ecLevel, index){
+
+  for(const version in VERSION_CAPACITIES){
+    if(!(textLength > VERSION_CAPACITIES[version][ecLevel][index])){
+      return version;
+    }
+  }
+  return 40;
+}
+
+
+function createQRCode(element){
+  let stringToEncode = element.children[1].value;
+  let ecLevel = element.children[3].value;
+  // let version = element.children[5].value;
+  let version = calculateVersion(stringToEncode.length, ecLevel, getIndex(stringToEncode));
+  let backgroundColor = [255, 255, 255];
+  let pixelColor = [255, 0, 0]
+  _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelColor)
+}
+
+function _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelColor){
+  let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
+  let everyPenalty = calculatePenaltyToEveryMask(matrix);
+  let minPenalty = Math.min(...everyPenalty);
+  let indexOfMin = everyPenalty.indexOf(minPenalty);
+  let appliedMask = indexOfMin + 1;
+
+  let maskedMatrix = applyMask(matrix, ARRAY_OF_FORMULAS[indexOfMin]);
+  fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
+  
+  
+  if(version >= 7){
+    fillWithVersionString(maskedMatrix, version);
+  }
+
+  fillWithWhiteSpace(maskedMatrix);
+
+  createCanvas(maskedMatrix, backgroundColor, pixelColor, version); 
+
+  return maskedMatrix;
 }
 
 function testLocal(stringToEncode, version, ecLevel){
@@ -152,7 +216,7 @@ function testLocal(stringToEncode, version, ecLevel){
   return maskedMatrix
 }
 
-export { createQRCode };
+export { createQRCode, loadLogo };
 
 // var sevenLTest = "Hey guys, did you know that in terms of male human and female Pokemon breeding, Vaporeon is the most compatible Pokémon for humans?"
 // var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"

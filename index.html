@@ -15,15 +15,28 @@
   <!-- <script src="./scripts/qrCodeGenerator.js" type="module"></script> -->
 
   <script type="module">
-    import { createQRCode } from "./scripts/qrCodeGenerator.js";
+    import { createQRCode, loadLogo } from "./scripts/qrCodeGenerator.js";
     window.createQRCode = createQRCode;
+    window.loadLogo = loadLogo;
   </script>
 
-  <!-- <script>
+  <script>
+    var typingTimer;
+    var doneTypingInterval = 500;
     $(document).ready(function(){
-      $("#qr-text").on("change", $({param1: this, param2: 5, param3: "L"}), createQRCode);
+      $("#qrText").on("keyup", function() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+          $(this).closest("form").submit();
+          console.log()
+        }, doneTypingInterval);
+      });
+      $("#qrText").on("keydown", function(){
+        clearTimeout(typingTimer);
+      })
     })
-  </script> -->
+
+  </script>
   
   <title id="pageTitle">QR Code Generator</title>
 </head>
@@ -32,25 +45,28 @@
     <div id="inputContainer">
       <form action="javascript:;" onsubmit="createQRCode(this)" id="QRform">
         <label for="qrText" class="labelInput">Enter your text</label>
-        <textarea name="text" id="qrText" cols="50" rows="15" class="dataInput"></textarea>
+        <textarea name="text" id="qrText" cols="50" rows="15" class="dataInput" keyup="this.form.submit()"></textarea>
         <label for="ecLevel" class="labelInput">Select the error correction level</label>
         <select name="EClevel" id="ecLevel" class="dataInput">
           <option value=""> --- </option>
           <option value="L">L (7% data recovery)</option>
           <option value="M">M (15% data recovery)</option>
           <option value="Q">Q (25% data recovery)</option>
-          <option value="H">H (30% data recovery)</option>
+          <option value="H" selected="selected">H (30% data recovery)</option>
         </select>
         <!-- This is placeholder, should be automatic in the future -->
         <label for="versionSelector" class="labelInput">Select what version to use</label>
         <input type="number" id="versionSelector" name="version" min="1" max="40" class="dataInput">
         <input type="submit" value="Continue" class="dataInput">
-
       </form>
     </div>
+    <form action="javascript:;" onsubmit="loadLogo(this)" id="logoForm">
+      <input type="file" name="logo" id="inputLogo">
+      <input type="submit" value="Continue" class="dataInput">
+    </form>
     <canvas id="qrCanvas" width="100" height="100"></canvas>
     <a href="" id="downloadLink">download link</a>
   </div>
-  <img src="./scripts/github-mark.png" alt="" id="placeholderLogo">
+  <img src="" alt="" id="placeholderLogo">
 </body>
 </html>
