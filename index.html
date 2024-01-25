@@ -34,6 +34,9 @@
       $("#qrText").on("keydown", function(){
         clearTimeout(typingTimer);
       })
+      $("#pixelColorPicker").on("change", function(){
+        $(this).closest("form").submit()
+      })
     })
 
   </script>
@@ -57,6 +60,10 @@
         <!-- This is placeholder, should be automatic in the future -->
         <label for="versionSelector" class="labelInput">Select what version to use</label>
         <input type="number" id="versionSelector" name="version" min="1" max="40" class="dataInput">
+        <label for="pixelColorPicker">Choose the pixel color</label>
+        <input type="color" id="pixelColorPicker">
+        <label for="backColorPicker">choose the back color</label>
+        <input type="color" id="backColorPicker" value="#ffffff">
         <input type="submit" value="Continue" class="dataInput">
       </form>
     </div>

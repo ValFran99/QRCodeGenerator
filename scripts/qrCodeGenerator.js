@@ -172,8 +172,18 @@ function createQRCode(element){
   let ecLevel = element.children[3].value;
   // let version = element.children[5].value;
   let version = calculateVersion(stringToEncode.length, ecLevel, getIndex(stringToEncode));
-  let backgroundColor = [255, 255, 255];
-  let pixelColor = [255, 0, 0]
+  let pixelColorHex = element.children[7].value;
+  let backColorHex = element.children[9].value;
+  let backgroundColor = [
+    parseInt(backColorHex.substring(1, 3), 16), 
+    parseInt(backColorHex.substring(3, 5), 16), 
+    parseInt(backColorHex.substring(5, 7), 16)
+  ];
+  let pixelColor = [
+    parseInt(pixelColorHex.substring(1, 3), 16), 
+    parseInt(pixelColorHex.substring(3, 5), 16), 
+    parseInt(pixelColorHex.substring(5, 7), 16)
+  ];
   _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelColor)
 }
 
