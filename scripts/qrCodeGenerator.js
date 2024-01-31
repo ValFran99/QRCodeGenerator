@@ -29,7 +29,7 @@ function getColorIndicesForCoord(x, y, width, offset){
   return [red, red + 1, red + 2, red + 3];
 }
 
-function createCanvas(qrCode, backgroundColor, pixelDataColor, version){
+function createCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDrawLogo){
 
   let canvas = document.getElementById("qrCanvas");
 
@@ -58,7 +58,7 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version){
   }
 
   // filling the center with white to make space for the logos
-  if(version != 1){
+  if(version != 1 && boolDrawLogo){
     let center = Math.floor(qrCode.length / 2);
     let logoLengthInPixels = Math.floor(qrCode.length / 4);
     let topLeftCoord = center - Math.floor(logoLengthInPixels / 2);
@@ -75,9 +75,7 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version){
     }
   }
 
-
-  let logo = document.getElementById("placeholderLogo");
-
+  
   if(qrCode.length < 93){
     canvas.width = canvas.height = Math.floor(window.innerHeight / 2);
   } else if(qrCode.length < 157){
@@ -86,6 +84,8 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version){
     canvas.width = canvas.height = Math.floor(window.innerHeight / 1.1);
   }
   
+  // necesito si o si un selector de logo
+  let logo = document.getElementById("logoPreview");
   let logoLengthInCanvas = Math.floor(canvas.width / 4);
   let centerCanvas = Math.floor(canvas.width / 2);
   let topLeftInCanvas = centerCanvas - Math.floor(logoLengthInCanvas / 2)
@@ -95,7 +95,7 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version){
   createImageBitmap(canvasImageData).then((data) => {
     context.imageSmoothingEnabled = false; // keep pixel perfect
     context.drawImage(data, 0, 0, canvas.width, canvas.height)
-    if(version != 1){
+    if(version != 1 && boolDrawLogo){
       context.drawImage(logo, topLeftInCanvas + 1, topLeftInCanvas + 1, logoLengthInCanvas - 5, logoLengthInCanvas - 5);
     }
   })
@@ -118,7 +118,7 @@ function loadLogo(element){
   var image;
 
   reader.onload = (event) => {
-    image = document.getElementById("placeholderLogo");
+    image = document.getElementById("logoPreview");
     image.src = event.target.result;
     image.style.display = "block";
     image.style.visibility = "visible";
@@ -126,12 +126,6 @@ function loadLogo(element){
 
   reader.readAsDataURL(element.children[0].files[0])
 } 
-
-function updateCanvas(canvas){
-
-}
-
-
 
 function getIndex(textToEncode){
   let regexNumeric = /^\d+$/;
@@ -174,6 +168,9 @@ function createQRCode(element){
   let version = calculateVersion(stringToEncode.length, ecLevel, getIndex(stringToEncode));
   let pixelColorHex = element.children[7].value;
   let backColorHex = element.children[9].value;
+
+  let logoYesNo = element.children[10].children[0].checked;
+
   let backgroundColor = [
     parseInt(backColorHex.substring(1, 3), 16), 
     parseInt(backColorHex.substring(3, 5), 16), 
@@ -184,10 +181,10 @@ function createQRCode(element){
     parseInt(pixelColorHex.substring(3, 5), 16), 
     parseInt(pixelColorHex.substring(5, 7), 16)
   ];
-  _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelColor)
+  _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelColor, logoYesNo)
 }
 
-function _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelColor){
+function _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelColor, boolDrawLogo){
   let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
   let everyPenalty = calculatePenaltyToEveryMask(matrix);
   let minPenalty = Math.min(...everyPenalty);
@@ -204,7 +201,7 @@ function _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelC
 
   fillWithWhiteSpace(maskedMatrix);
 
-  createCanvas(maskedMatrix, backgroundColor, pixelColor, version); 
+  createCanvas(maskedMatrix, backgroundColor, pixelColor, version, boolDrawLogo); 
 
   return maskedMatrix;
 }

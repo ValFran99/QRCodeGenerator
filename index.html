@@ -24,6 +24,7 @@
     var typingTimer;
     var doneTypingInterval = 500;
     $(document).ready(function(){
+      $("#logoForm").hide()
       $("#qrText").on("keyup", function() {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(() => {
@@ -37,19 +38,30 @@
       $("#pixelColorPicker").on("change", function(){
         $(this).closest("form").submit()
       })
-    })
+      $("#logoSelector").on("change", function(){
+        $("#logoForm").toggle()
+        $(this).closest("form").submit();
+      })
 
+      $("#logoForm").on("submit", function(){
+        $("#logoPreview").on("load", function(){
+          $("#QRform").submit()
+        })
+      })
+
+    })
   </script>
   
   <title id="pageTitle">QR Code Generator</title>
 </head>
 <body>
+  <h1>WIP, its working, didnt do anything in CSS for now</h1>
   <div id="mainDiv">
     <div id="inputContainer">
       <form action="javascript:;" onsubmit="createQRCode(this)" id="QRform">
         <label for="qrText" class="labelInput">Enter your text</label>
         <textarea name="text" id="qrText" cols="50" rows="15" class="dataInput" keyup="this.form.submit()"></textarea>
-        <label for="ecLevel" class="labelInput">Select the error correction level</label>
+        <label for="ecLevel" class="labelInput" id="ecLevelLabel">Select the error correction level</label>
         <select name="EClevel" id="ecLevel" class="dataInput">
           <option value=""> --- </option>
           <option value="L">L (7% data recovery)</option>
@@ -58,22 +70,25 @@
           <option value="H" selected="selected">H (30% data recovery)</option>
         </select>
         <!-- This is placeholder, should be automatic in the future -->
-        <label for="versionSelector" class="labelInput">Select what version to use</label>
+        <label for="versionSelector" class="labelInput" id="verSelectLabel">Select what version to use</label>
         <input type="number" id="versionSelector" name="version" min="1" max="40" class="dataInput">
         <label for="pixelColorPicker">Choose the pixel color</label>
         <input type="color" id="pixelColorPicker">
         <label for="backColorPicker">choose the back color</label>
         <input type="color" id="backColorPicker" value="#ffffff">
-        <input type="submit" value="Continue" class="dataInput">
+        <label for="logoYesNo" id="labelLogoSelector">
+          <input type="checkbox" id="logoSelector">Want a logo?
+        </label>
+        <input type="submit" value="Continue" class="dataInput" id="mainFormSubmit" name="mainForm">
       </form>
     </div>
     <form action="javascript:;" onsubmit="loadLogo(this)" id="logoForm">
       <input type="file" name="logo" id="inputLogo">
-      <input type="submit" value="Continue" class="dataInput">
+      <input type="submit" value="Continue" class="dataInput" id="logoFormSubmit">
     </form>
     <canvas id="qrCanvas" width="100" height="100"></canvas>
     <a href="" id="downloadLink">download link</a>
   </div>
-  <img src="" alt="" id="placeholderLogo">
+  <img src="" alt="" id="logoPreview">
 </body>
 </html>

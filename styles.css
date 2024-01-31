@@ -16,9 +16,24 @@
   display: none;
 }
 
-#placeholderLogo{
+#logoPreview{
   visibility: hidden;
   display: none;
   width: 20vw;
   height: 15vh;
+}
+
+#labelLogoSelector{
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+#logoSelector{
+  display: block;
+}
+
+#ecLevel, #ecLevelLabel, #versionSelector, #verSelectLabel{
+  visibility: hidden;
+  display: none;
 }
