@@ -96,7 +96,7 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDraw
     context.imageSmoothingEnabled = false; // keep pixel perfect
     context.drawImage(data, 0, 0, canvas.width, canvas.height)
     if(version != 1 && boolDrawLogo){
-      context.drawImage(logo, topLeftInCanvas + 1, topLeftInCanvas + 1, logoLengthInCanvas - 5, logoLengthInCanvas - 5);
+      context.drawImage(logo, topLeftInCanvas + 2, topLeftInCanvas + 2, logoLengthInCanvas - 5, logoLengthInCanvas - 5);
     }
   })
 
@@ -107,7 +107,7 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDraw
     link.style.display = "block"
     link.download = 'qrCode.png';
     link.href = canvas.toDataURL();
-    document.getElementById("mainDiv").appendChild(link)
+    document.getElementById("qrCanvasContainer").appendChild(link)
   }, 100);
   
 
@@ -120,8 +120,8 @@ function loadLogo(element){
   reader.onload = (event) => {
     image = document.getElementById("logoPreview");
     image.src = event.target.result;
-    image.style.display = "block";
-    image.style.visibility = "visible";
+    // image.style.display = "block";
+    // image.style.visibility = "visible";
   }
 
   reader.readAsDataURL(element.children[0].files[0])

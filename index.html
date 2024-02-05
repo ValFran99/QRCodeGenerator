@@ -8,6 +8,15 @@
   integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
   crossorigin="anonymous"></script>
 
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+
   <link rel="stylesheet" href="styles.css">
 
   <link href="https://fonts.cdnfonts.com/css/d-din" rel="stylesheet">
@@ -24,7 +33,12 @@
     var typingTimer;
     var doneTypingInterval = 500;
     $(document).ready(function(){
-      $("#logoForm").hide()
+      
+      $("#qrText").on("input", function () {
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+      });
+
       $("#qrText").on("keyup", function() {
         clearTimeout(typingTimer);
         typingTimer = setTimeout(() => {
@@ -32,14 +46,18 @@
           console.log()
         }, doneTypingInterval);
       });
+
       $("#qrText").on("keydown", function(){
         clearTimeout(typingTimer);
       })
-      $("#pixelColorPicker").on("change", function(){
+      $(".colorPicker").on("change", function(){
         $(this).closest("form").submit()
       })
       $("#logoSelector").on("change", function(){
         $("#logoForm").toggle()
+        $(this).closest("form").submit();
+      })
+      $("#inputLogo").on("change", function() {
         $(this).closest("form").submit();
       })
 
@@ -49,18 +67,22 @@
         })
       })
 
+      setTimeout(function(){
+        $("#QRform").submit()
+      }, 50)
     })
+
   </script>
   
   <title id="pageTitle">QR Code Generator</title>
 </head>
 <body>
-  <h1>WIP, its working, didnt do anything in CSS for now</h1>
+  <h1>Work In Progress</h1>
   <div id="mainDiv">
     <div id="inputContainer">
       <form action="javascript:;" onsubmit="createQRCode(this)" id="QRform">
-        <label for="qrText" class="labelInput">Enter your text</label>
-        <textarea name="text" id="qrText" cols="50" rows="15" class="dataInput" keyup="this.form.submit()"></textarea>
+        <label for="qrText" class="labelInput">Enter your text or url</label>
+        <textarea name="text" id="qrText" cols="60" rows="4" class="dataInput" keyup="this.form.submit()">Here!</textarea>
         <label for="ecLevel" class="labelInput" id="ecLevelLabel">Select the error correction level</label>
         <select name="EClevel" id="ecLevel" class="dataInput">
           <option value=""> --- </option>
@@ -72,22 +94,25 @@
         <!-- This is placeholder, should be automatic in the future -->
         <label for="versionSelector" class="labelInput" id="verSelectLabel">Select what version to use</label>
         <input type="number" id="versionSelector" name="version" min="1" max="40" class="dataInput">
-        <label for="pixelColorPicker">Choose the pixel color</label>
-        <input type="color" id="pixelColorPicker">
-        <label for="backColorPicker">choose the back color</label>
-        <input type="color" id="backColorPicker" value="#ffffff">
+        <label for="pixelColorPicker">Pixel color</label>
+        <input type="color" id="pixelColorPicker" class="colorPicker">
+        <label for="backColorPicker">Background color</label>
+        <input type="color" id="backColorPicker" value="#ffffff" class="colorPicker">
         <label for="logoYesNo" id="labelLogoSelector">
           <input type="checkbox" id="logoSelector">Want a logo?
         </label>
-        <input type="submit" value="Continue" class="dataInput" id="mainFormSubmit" name="mainForm">
+        <!-- <input type="submit" value="Continue" class="dataInput" id="mainFormSubmit" name="mainForm"> -->
+      </form>
+      <form action="javascript:;" onsubmit="loadLogo(this)" id="logoForm" class="animate__animated animate__fadeInDown">
+        <input type="file" name="logo" id="inputLogo" accept=".png, .jpeg, .svg, .webp, .gif">
       </form>
     </div>
-    <form action="javascript:;" onsubmit="loadLogo(this)" id="logoForm">
-      <input type="file" name="logo" id="inputLogo">
-      <input type="submit" value="Continue" class="dataInput" id="logoFormSubmit">
-    </form>
-    <canvas id="qrCanvas" width="100" height="100"></canvas>
-    <a href="" id="downloadLink">download link</a>
+    <!-- <div id="logoFormContainer">
+    </div> -->
+    <div id="qrCanvasContainer">
+      <canvas id="qrCanvas" width="100" height="100"></canvas>
+      <a href="" id="downloadLink">Download link</a>
+    </div>
   </div>
   <img src="" alt="" id="logoPreview">
 </body>

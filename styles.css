@@ -1,6 +1,7 @@
-#inputContainer{
-  display: flexbox;
-  border: 1px solid black;
+
+#mainDiv{
+  border: 1px solid blue;
+  display: flex;
 }
 
 .labelInput, .dataInput{
@@ -9,11 +10,68 @@
 
 #qrCanvas{
   border: 1px solid black;
+  margin: auto;
+  display: block;
   /* scale: 4; */
 }
 
-#downloadLink{
+#qrText{
+  overflow: hidden;
+  resize: none;
+  padding-left: 7px;
+  padding-top: 4px;
+  /* height: 81px; */
+  font-size: large;
+  margin-bottom: 20px;
+}
+
+/* 
+.colorPicker{
+  display: block;
+  margin: 5px;
+} */
+
+#labelLogoSelector{
+  margin-top: 15px;
+}
+
+#inputContainer{
+  display: flexbox;
+  border: 1px solid red;
+  width: fit-content;
+  height: fit-content;
+  flex: 1;
+}
+
+#qrCanvasContainer{
+  border: 5px solid red;
+  padding: 20px 20px;
+  flex: 1;
+  
+}
+
+#logoForm{
   display: none;
+  animation-duration: 200ms;
+  margin-top: 10px;
+}
+
+#downloadLink{
+  padding: 1vh 3vh;
+  display: none;
+  width: 47%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #04aa6d;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+}
+
+#downloadLink:hover{
+  background-color: #059862;
 }
 
 #logoPreview{
