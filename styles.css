@@ -1,15 +1,25 @@
+body{
+  background-color: #ffebee;
+  text-align: center;
+}
+
 
 #mainDiv{
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
+  text-align: initial;
   display: flex;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  width: 100%;
 }
 
 .labelInput, .dataInput{
   display: block;
+  margin-bottom: 0.5rem;
 }
 
 #qrCanvas{
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin: auto;
   display: block;
   /* scale: 4; */
@@ -36,15 +46,18 @@
 }
 
 #inputContainer{
+  padding-left: 2vw;
+  padding-top: 3vh;
   display: flexbox;
-  border: 1px solid red;
+  border: 1px solid white;
   width: fit-content;
   height: fit-content;
   flex: 1;
+  background-color: white;
 }
 
 #qrCanvasContainer{
-  border: 5px solid red;
+  /* border: 5px solid red; */
   padding: 20px 20px;
   flex: 1;
   
@@ -85,6 +98,7 @@
   display: flex;
   align-items: center;
   user-select: none;
+  padding: 0.7rem;
 }
 
 #logoSelector{
@@ -94,4 +108,27 @@
 #ecLevel, #ecLevelLabel, #versionSelector, #verSelectLabel{
   visibility: hidden;
   display: none;
+}
+
+.colorPicker{
+  width: 3rem;
+  height: 3rem;
+  padding: .5rem;
+  /* width: 30px;
+  height: 30px; */
+  border: 0;
+  background-color: transparent;
+}
+
+.colorPickerLabel{
+  /* border: 1px solid black; */
+  width: 12vw;
+  color: grey;
+  align-items: center;
+  display: flex;
+}
+
+#inputLogo{
+  /* border: 1px solid black; */
+  padding: 0.7rem;
 }

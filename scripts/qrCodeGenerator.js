@@ -166,10 +166,10 @@ function createQRCode(element){
   let ecLevel = element.children[3].value;
   // let version = element.children[5].value;
   let version = calculateVersion(stringToEncode.length, ecLevel, getIndex(stringToEncode));
-  let pixelColorHex = element.children[7].value;
-  let backColorHex = element.children[9].value;
+  let pixelColorHex = element.children[6].children[0].value;
+  let backColorHex = element.children[7].children[0].value;
 
-  let logoYesNo = element.children[10].children[0].checked;
+  let logoYesNo = element.children[8].children[0].checked;
 
   let backgroundColor = [
     parseInt(backColorHex.substring(1, 3), 16), 
