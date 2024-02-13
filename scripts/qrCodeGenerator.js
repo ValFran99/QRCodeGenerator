@@ -105,7 +105,7 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDraw
   setTimeout(() => {
     var link = document.getElementById("downloadLink");
     link.style.display = "block"
-    link.download = 'qrCode.png';
+    link.download = 'yourQRCode.png';
     link.href = canvas.toDataURL();
     document.getElementById("qrCanvasContainer").appendChild(link)
   }, 100);

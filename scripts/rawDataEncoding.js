@@ -201,17 +201,20 @@ function iterateThroughBlocks(codeWords, word, group, limitBlocks, limitCodeword
 function encodeNumericMode(textToEncode) {
 
   let splittedData = splitString(textToEncode, 3);
+  console.log(splittedData)
   let threeDigits = "";
   let digitsInBinary = "";
   let amountToPad = 0;
   let numericEncoded = "";
   for (let i = 0; i < splittedData.length; i++) {
     threeDigits = splittedData[i];
-    digitsInBinary = parseInt(threeDigits, 10).toString(2);
 
     // ugly stuff incoming
-    if (threeDigits[0] == 0) {
-      if (threeDigits[1] == 0) {
+    digitsInBinary = parseInt(threeDigits, 10).toString(2);
+    console.log("The number in binary: " + digitsInBinary)
+    console.log("The digits length: " + threeDigits.length)
+    if (threeDigits.length < 3) {
+      if (threeDigits.length == 1) {
         amountToPad = 4;
       } else {
         amountToPad = 7;
@@ -219,6 +222,7 @@ function encodeNumericMode(textToEncode) {
     } else {
       amountToPad = 10;
     }
+    console.log("filling stuff with: " + digitsInBinary.padStart(amountToPad, "0"))
     numericEncoded += digitsInBinary.padStart(amountToPad, "0");
   }
   return numericEncoded;
