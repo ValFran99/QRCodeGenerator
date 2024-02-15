@@ -34,8 +34,6 @@ function addFinderPatterns(matrix, topLeftCoords){
     [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]
   ]
 
-  // console.log(finderPattern)
-
   let startX = topLeftCoords[0];
   let startY = topLeftCoords[1];
 
@@ -272,7 +270,9 @@ function fillPattern(matrix, dataPattern){
 
 }
 
-
+/*
+  To print the matrix in the console for testing purposes
+*/
 function printMatrix(matrix){
   let line = "";
   for(let i = 0; i < matrix.length; i++){

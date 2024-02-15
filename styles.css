@@ -6,7 +6,6 @@ body{
 
 
 #mainDiv{
-  /* border: 1px solid blue; */
   text-align: initial;
   display: flex;
   background-color: white;
@@ -14,26 +13,26 @@ body{
   width: 100%;
 }
 
+/* 
+#############################################################
+#                        INPUT AREA                         #
+#############################################################
+
+*/
+
 .labelInput, .dataInput{
   display: block;
   margin-bottom: 0.5rem;
 }
 
-#qrText{
+#qrTextInput{
   overflow: hidden;
   resize: none;
   padding-left: 7px;
   padding-top: 4px;
-  /* height: 81px; */
   font-size: large;
   margin-bottom: 20px;
 }
-
-/* 
-.colorPicker{
-  display: block;
-  margin: 5px;
-} */
 
 #labelLogoSelector{
   margin-top: 15px;
@@ -43,50 +42,16 @@ body{
   padding-left: 2vw;
   padding-top: 3vh;
   display: flexbox;
-  /* border: 1px solid white; */
   width: fit-content;
   height: fit-content;
   flex: 1;
   background-color: white;
 }
 
-#qrCanvas{
-  /* border: 1px solid black; */
-  margin: auto;
-  display: block;
-  /* width: 95%; */
-  /* scale: 4; */
-}
-
-#qrCanvasContainer{
-  /* border: 5px solid red; */
-  padding: 20px 20px;
-  flex: 1;
-  
-}
-
 #logoForm{
   display: none;
   animation-duration: 200ms;
   margin-top: 10px;
-}
-
-#downloadLink{
-  padding: 1vh 3vh;
-  display: none;
-  width: 47%;
-  margin-left: auto;
-  margin-right: auto;
-  /* border: 1px solid black; */
-  border-radius: 5px;
-  background-color: #04aa6d;
-  color: white;
-  text-decoration: none;
-  text-align: center;
-}
-
-#downloadLink:hover{
-  background-color: #059862;
 }
 
 #logoPreview{
@@ -116,14 +81,11 @@ body{
   width: 3rem;
   height: 3rem;
   padding: .5rem;
-  /* width: 30px;
-  height: 30px; */
   border: 0;
   background-color: transparent;
 }
 
 .colorPickerLabel{
-  /* border: 1px solid black; */
   width: fit-content;
   color: grey;
   align-items: center;
@@ -134,32 +96,64 @@ body{
   padding: 0.7rem;
 }
 
+
+/* 
+
+#############################################################
+#                         CANVAS SIDE                       #
+#############################################################
+
+*/
+
+#qrCanvas{
+  margin: auto;
+  display: block;
+}
+
+#qrCanvasContainer{
+  padding: 20px 20px;
+  flex: 1;
+  
+}
+
+#downloadLink{
+  padding: 1vh 3vh;
+  display: none;
+  width: 47%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+  background-color: #04aa6d;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+}
+
+#downloadLink:hover{
+  background-color: #059862;
+}
+
+/* 
+#############################################################
+#                           FOOTER                          #
+#############################################################
+
+*/
+
 #pageFooter{
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
-  /* padding: 2px 2px 2px 2px; */
   height: 10vh;
   background-color: #ffffff;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-/* From the fake portfolio */
-
-/* .social_links{
-  border: 1px solid white;
-  list-style: none;
-  width: 90vw; 
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-wrap: wrap;
-} */
+/* Copy paste from another project */
 
 .social_link_container{
   display: inline-block;
-  /* border: 1px solid black; */
   width: fit-content;
   margin-top: 3vh;
   transition: transform 0.3s ease-in-out 0ms;
@@ -185,6 +179,13 @@ body{
   border: 3px solid #be3144;
 }
 
+/* 
+#############################################################
+#                      MEDIA STUFF                          #
+#############################################################
+
+*/
+
 @media(height < 555px){
   #pageFooter{
     position: sticky;
@@ -192,7 +193,6 @@ body{
     bottom: auto;
   }
   .social_link_container{
-    /* border: 1px solid white; */
     transition: transform 0.3s ease-in-out 0ms;
   }
 }
@@ -218,7 +218,7 @@ body{
     width: 95%;
   }
 
-  #qrText{
+  #qrTextInput{
     overflow: visible;
     width: 98%;
   }
@@ -235,7 +235,7 @@ body{
     width: 90%;
   }
 
-  #qrText{
+  #qrTextInput{
     width: 98%;
   }
 }

@@ -152,6 +152,9 @@ function createMessagePolynomial(block){
   return [poly, ogMesPolyLength];
 }
 
+/*
+  Multiplication using the logs/exp
+*/
 function gmult (a, b) {
   if (a === 0 || b === 0) { return (0); }
   var i = LOG[a];
@@ -227,7 +230,7 @@ function createErrorCorrectionCodewords(codeBlocks, version, ecMode){
 
 function ecCodewordsByBlock(block, version, ecMode){
   let mesPoly = [];
-  let ogMesPolyLength = 0;
+  let ogMesPolyLength;
   let messagePolyArr = [];
   
   messagePolyArr = createMessagePolynomial(block);

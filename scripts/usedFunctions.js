@@ -1,9 +1,11 @@
+/*
+  Splits a string into an array of strings with length 'n'
+*/
 function splitString(data, n){
   let splitted = []
   let inter = []
   for(let i = 0; i < data.length; i++){
     inter.push(data[i])
-    // console.log(inter)
     if((i + 1) % n == 0){
 
       splitted.push(inter.join(""))
@@ -13,10 +15,12 @@ function splitString(data, n){
   if (inter.length != 0){
     splitted.push(inter.join(""))
   }
-  
   return splitted
 }
 
+/*
+  Used one time to generate the fields that are declared in 'errorCorrection.js'
+*/
 function generateGaloisField(n, xorWith){
   
   let exponentToNumber = new Array(n);

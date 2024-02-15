@@ -1,13 +1,21 @@
 import { calculatePenaltyToEveryMask, applyMask, fillWithFormatString, fillWithVersionString, ARRAY_OF_FORMULAS } from "./matrixMasking.js";
-import { createMatrix, printMatrix } from "./matrixGenerator.js";
+import { createMatrix } from "./matrixGenerator.js";
 import { encodeData } from "./rawDataEncoding.js";
 
 var VERSION_CAPACITIES = {};
 
+
+/*
+  Loads the json file of the version capacities by eclevel and version
+*/
 fetch("./scripts/versionCapacities.json")
     .then((response) => response.json())
     .then((json) => VERSION_CAPACITIES = json)
 
+
+/*
+  Adds the necessary 4 blank modules surrounding the qr code
+*/
 function fillWithWhiteSpace(matrix){
   let matrixLength = matrix.length;
   let whiteArr;
@@ -29,7 +37,10 @@ function getColorIndicesForCoord(x, y, width, offset){
   return [red, red + 1, red + 2, red + 3];
 }
 
-function createCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDrawLogo){
+/*
+  Draws the created Qrcode on the canvas, also set ups the download link and the logo
+*/
+function drawOnCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDrawLogo){
 
   let canvas = document.getElementById("qrCanvas");
 
@@ -75,7 +86,7 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDraw
     }
   }
 
-  
+  // resizes the canvas depending on the size of the qr code so it remains readable at bigger versions
   if(qrCode.length < 93){
     canvas.width = canvas.height = Math.floor(window.innerHeight / 2);
   } else if(qrCode.length < 157){
@@ -84,13 +95,12 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDraw
     canvas.width = canvas.height = Math.floor(window.innerHeight / 1.1);
   }
   
-  // necesito si o si un selector de logo
   let logo = document.getElementById("logoPreview");
   let logoLengthInCanvas = Math.floor(canvas.width / 4);
   let centerCanvas = Math.floor(canvas.width / 2);
   let topLeftInCanvas = centerCanvas - Math.floor(logoLengthInCanvas / 2)
   
-  // stackoverflow my beloved
+  // stackoverflow my beloved (scales up the canvas without making everything blurry)
   // https://stackoverflow.com/questions/3448347/how-to-scale-an-imagedata-in-html-canvas (last answer)
   createImageBitmap(canvasImageData).then((data) => {
     context.imageSmoothingEnabled = false; // keep pixel perfect
@@ -101,14 +111,14 @@ function createCanvas(qrCode, backgroundColor, pixelDataColor, version, boolDraw
   })
 
 
-  // this should go in another function, but idk
+  // a little wait time so the image actually loads into the download link
   setTimeout(() => {
     var link = document.getElementById("downloadLink");
     link.style.display = "block"
     link.download = 'yourQRCode.png';
     link.href = canvas.toDataURL();
     document.getElementById("qrCanvasContainer").appendChild(link)
-  }, 100);
+  }, 200);
   
 
 }
@@ -120,13 +130,15 @@ function loadLogo(element){
   reader.onload = (event) => {
     image = document.getElementById("logoPreview");
     image.src = event.target.result;
-    // image.style.display = "block";
-    // image.style.visibility = "visible";
   }
 
   reader.readAsDataURL(element.children[0].files[0])
 } 
 
+/*
+  Checks the type of text to encode, returns the index used to calculate the minimum version that fits the number of characters
+  and text type
+*/
 function getIndex(textToEncode){
   let regexNumeric = /^\d+$/;
   let regexAlphanumeric = /^[\dA-Z $%*+\-./:]*$/;
@@ -164,7 +176,6 @@ function calculateVersion(textLength, ecLevel, index){
 function createQRCode(element){
   let stringToEncode = element.children[1].value;
   let ecLevel = element.children[3].value;
-  // let version = element.children[5].value;
   let version = calculateVersion(stringToEncode.length, ecLevel, getIndex(stringToEncode));
   let pixelColorHex = element.children[6].children[0].value;
   let backColorHex = element.children[7].children[0].value;
@@ -201,35 +212,9 @@ function _createQRCode(stringToEncode, version, ecLevel, backgroundColor, pixelC
 
   fillWithWhiteSpace(maskedMatrix);
 
-  createCanvas(maskedMatrix, backgroundColor, pixelColor, version, boolDrawLogo); 
+  drawOnCanvas(maskedMatrix, backgroundColor, pixelColor, version, boolDrawLogo); 
 
   return maskedMatrix;
 }
 
-function testLocal(stringToEncode, version, ecLevel){
-  let matrix = createMatrix(encodeData(stringToEncode, version, ecLevel), version);
-  let everyPenalty = calculatePenaltyToEveryMask(matrix);
-  let minPenalty = Math.min(...everyPenalty);
-  let indexOfMin = everyPenalty.indexOf(minPenalty);
-  let appliedMask = indexOfMin + 1;
-
-  let maskedMatrix = applyMask(matrix, ARRAY_OF_FORMULAS[indexOfMin]);
-  fillWithFormatString(maskedMatrix, appliedMask, ecLevel);
-  
-  
-  if(version >= 7){
-    fillWithVersionString(maskedMatrix, version);
-  }
-  return maskedMatrix
-}
-
 export { createQRCode, loadLogo };
-
-// var sevenLTest = "Hey guys, did you know that in terms of male human and female Pokemon breeding, Vaporeon is the most compatible Pokémon for humans?"
-// var testStringV13 = "Hey guys, did you know that in terms of male human and female Pokemon breeding"
-// var testStringV5 = "www.youtube.com/watch?v=sRgUrKWiXQs"
-// var testStringV1 = "hello world"
-
-// var masked = testLocal(testStringV1, 1, "L")
-
-// printMatrix(masked)

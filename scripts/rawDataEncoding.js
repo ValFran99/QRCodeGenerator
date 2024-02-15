@@ -3,6 +3,9 @@ import { createErrorCorrectionCodewords } from "./errorCorrection.js";
 
 var DATA_BY_VERSION_AND_ECLEVEL = {};
 
+/*
+  Loads all the necessary data from a json file
+*/
 fetch("./scripts/dataAndCWByVersionAndEcLevel.json")
     .then((response) => response.json())
     .then((json) => DATA_BY_VERSION_AND_ECLEVEL = json)
@@ -83,13 +86,11 @@ function getEncodingMode(textToEncode){
 }
 
 function getCharCount(textLength, mode, versionRange){
-  // console.log(CHAR_COUNT[versionRange][mode])
   let binary = textLength.toString(2);
   return binary.padStart(CHAR_COUNT[versionRange][mode], "0");
 }
 
 function encodeData(textToEncode, version, ecMode){
-
   let versionRange;
   if(version < 10){
     versionRange = "1-9"
@@ -126,8 +127,6 @@ function encodeData(textToEncode, version, ecMode){
   
   // adding terminator
   let encodedData = enMode + charCount + encodedString;
-  // console.log(version)
-  // console.log(ecMode)
   let terminator = (DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length < 4) ? DATA_BY_VERSION_AND_ECLEVEL[version][ecMode]["totalDataBits"] - encodedData.length : 4;
   encodedData = encodedData.padEnd(encodedData.length + terminator, "0");
 
@@ -163,7 +162,6 @@ function interleaveCW(codeWords){
   let limitCodeWordsGroup1 = codeWords[0][0].length;
   let limitCodeWordsGroup2 = (limitBlocksGroup2 == 0) ? 0 : codeWords[1][0].length;
   
-
   let group = 0;
   let word = 0;
 
@@ -201,7 +199,6 @@ function iterateThroughBlocks(codeWords, word, group, limitBlocks, limitCodeword
 function encodeNumericMode(textToEncode) {
 
   let splittedData = splitString(textToEncode, 3);
-  console.log(splittedData)
   let threeDigits = "";
   let digitsInBinary = "";
   let amountToPad = 0;
@@ -211,8 +208,6 @@ function encodeNumericMode(textToEncode) {
 
     // ugly stuff incoming
     digitsInBinary = parseInt(threeDigits, 10).toString(2);
-    console.log("The number in binary: " + digitsInBinary)
-    console.log("The digits length: " + threeDigits.length)
     if (threeDigits.length < 3) {
       if (threeDigits.length == 1) {
         amountToPad = 4;
@@ -222,7 +217,6 @@ function encodeNumericMode(textToEncode) {
     } else {
       amountToPad = 10;
     }
-    console.log("filling stuff with: " + digitsInBinary.padStart(amountToPad, "0"))
     numericEncoded += digitsInBinary.padStart(amountToPad, "0");
   }
   return numericEncoded;
@@ -254,8 +248,6 @@ function encodeAlphanumericMode(textToEncode) {
     var medSult = (45 * charAcode) + charBcode;
     alphaEncoded += medSult.toString(2).padStart(11, "0");
   }
-
-
   return alphaEncoded;
 }
 
