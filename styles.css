@@ -1,6 +1,7 @@
 body{
   background-color: #ffebee;
   text-align: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 
@@ -42,7 +43,7 @@ body{
   padding-left: 2vw;
   padding-top: 3vh;
   display: flexbox;
-  border: 1px solid white;
+  /* border: 1px solid white; */
   width: fit-content;
   height: fit-content;
   flex: 1;
@@ -50,7 +51,7 @@ body{
 }
 
 #qrCanvas{
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin: auto;
   display: block;
   /* width: 95%; */
@@ -58,7 +59,7 @@ body{
 }
 
 #qrCanvasContainer{
-  border: 5px solid red;
+  /* border: 5px solid red; */
   padding: 20px 20px;
   flex: 1;
   
@@ -76,7 +77,7 @@ body{
   width: 47%;
   margin-left: auto;
   margin-right: auto;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 5px;
   background-color: #04aa6d;
   color: white;
@@ -133,10 +134,78 @@ body{
   padding: 0.7rem;
 }
 
-@media (1100px <= width <= 1250px){
+#pageFooter{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  /* padding: 2px 2px 2px 2px; */
+  height: 10vh;
+  background-color: #ffffff;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
 
+/* From the fake portfolio */
+
+/* .social_links{
+  border: 1px solid white;
+  list-style: none;
+  width: 90vw; 
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+} */
+
+.social_link_container{
+  display: inline-block;
+  /* border: 1px solid black; */
+  width: fit-content;
+  margin-top: 3vh;
+  transition: transform 0.3s ease-in-out 0ms;
+}
+
+.social_link_container:hover{
+  transform: translateY(5px);
+}
+
+.social_name{
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  color: #272729;
+  font-size: 23px;
+}
+
+.fas{
+  padding-right: 5px;
+}
+
+.separator{
+  margin-top: 180px;
+  border: 3px solid #be3144;
+}
+
+@media(height < 555px){
+  #pageFooter{
+    position: sticky;
+    left: auto;
+    bottom: auto;
+  }
+  .social_link_container{
+    /* border: 1px solid white; */
+    transition: transform 0.3s ease-in-out 0ms;
+  }
+}
+
+@media (1100px <= width <= 1250px){
   #qrCanvas{
     width: 90%;
+  }
+
+  #pageFooter{
+    position: sticky;
+    left: auto;
+    bottom: auto;
   }
 }
 
@@ -148,31 +217,26 @@ body{
   #inputContainer{
     width: 95%;
   }
-/* 
-  #qrCanvasContainer{
-    width: 50%;
-  }
-
-  #qrCanvas{
-    width: 95%;
-  } */
 
   #qrText{
-    width: 100%;
+    overflow: visible;
+    width: 98%;
+  }
+
+  #pageFooter{
+    position: sticky;
+    left: auto;
+    bottom: auto;
   }
 }
 
 @media(width < 780px){
-
-  #inputContainer{
+  #qrCanvas{
     width: 90%;
   }
 
-  #qrCanvas{
-    width: 95%;
-  }
-
   #qrText{
-    width: 100%;
+    width: 98%;
   }
 }
+
